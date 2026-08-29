@@ -53,7 +53,7 @@
 **CI Pipeline:**
 - GitHub Actions - pushes to `main` and manual dispatches run the workflow in `.github/workflows/deploy-pages.yml`.
 - The `verify` job uses `oven-sh/setup-bun`, installs from `bun.lock`, runs tests/typecheck/lint/build, and uploads only `dist/` with `actions/upload-pages-artifact`.
-- The separate `deploy` job uses official `actions/configure-pages` and `actions/deploy-pages` actions with job-scoped `pages: write` and OIDC `id-token: write`; no long-lived deployment secret is required.
+- The separate `deploy` job uses official `actions/configure-pages` and `actions/deploy-pages` actions with job-scoped `pages: write` and OIDC `id-token: write`; the same short-lived token attaches the custom domain through GitHub's Pages API, so no long-lived deployment secret is required.
 
 ## Environment Configuration
 

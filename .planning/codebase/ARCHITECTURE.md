@@ -92,7 +92,7 @@
 1. A push to `main` starts `.github/workflows/deploy-pages.yml`.
 2. The read-only verification job installs the locked Bun dependencies and runs tests, typecheck, lint, and the Vite production build.
 3. The workflow uploads only `dist/`, including the copied `public/CNAME`, as the Pages artifact.
-4. A separate deploy job receives `pages: write` and an OIDC token, enables/configures Pages, and deploys the artifact.
+4. A separate deploy job receives `pages: write` and an OIDC token, enables Pages, attaches the custom domain with its short-lived GitHub token, and deploys the artifact.
 5. Cloudflare resolves `foldimals.itman.fyi` to `jellydn.github.io`; GitHub Pages validates the domain and manages TLS.
 
 **State Management:**
