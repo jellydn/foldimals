@@ -1,5 +1,7 @@
-const CACHE = 'foldimals-v1'
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/foldimals-icon.svg']
+const CACHE = 'foldimals-v2'
+const APP_SHELL = ['', 'index.html', 'manifest.webmanifest', 'foldimals-icon.svg']
+  .map((path) => new URL(path, self.registration.scope).toString())
+const FALLBACK = new URL('index.html', self.registration.scope).toString()
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)))
@@ -18,6 +20,6 @@ self.addEventListener('fetch', (event) => {
       const copy = response.clone()
       caches.open(CACHE).then((cache) => cache.put(event.request, copy))
       return response
-    }).catch(() => caches.match('/index.html'))),
+    }).catch(() => caches.match(FALLBACK))),
   )
 })

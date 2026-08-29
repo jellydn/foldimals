@@ -2,12 +2,12 @@
   "name": "Foldimals — Origami for Kids",
   "short_name": "Foldimals",
   "description": "Fold friendly origami animals one step at a time.",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#fff9ed",
   "theme_color": "#ff785a",
   "orientation": "any",
   "icons": [
-    { "src": "/foldimals-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "foldimals-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }

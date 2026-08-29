@@ -48,12 +48,12 @@
 **Hosting:**
 - GitHub Pages - `.github/workflows/deploy-pages.yml` publishes the Vite `dist/` artifact to the custom domain declared in `public/CNAME`.
 - Cloudflare DNS is external deployment state: `foldimals.itman.fyi` must be a DNS-only CNAME to `jellydn.github.io`; no Cloudflare API credential or DNS-as-code exists in this repository.
-- GitHub Pages manages TLS and HTTPS after DNS validation. Root-relative PWA URLs remain valid because the app is served at the custom-domain root.
+- GitHub Pages manages TLS and HTTPS after DNS validation. Path-relative Vite, manifest, and service-worker URLs support both the generated project path and custom-domain root.
 
 **CI Pipeline:**
 - GitHub Actions - pushes to `main` and manual dispatches run the workflow in `.github/workflows/deploy-pages.yml`.
 - The `verify` job uses `oven-sh/setup-bun`, installs from `bun.lock`, runs tests/typecheck/lint/build, and uploads only `dist/` with `actions/upload-pages-artifact`.
-- The separate `deploy` job uses official `actions/configure-pages` and `actions/deploy-pages` actions with job-scoped `pages: write` and OIDC `id-token: write`; the same short-lived token attaches the custom domain through GitHub's Pages API, so no long-lived deployment secret is required.
+- The separate `deploy` job uses official `actions/configure-pages` and `actions/deploy-pages` actions with job-scoped `pages: write` and OIDC `id-token: write`; no long-lived deployment secret is required. Attaching the custom domain remains a repository-owner setting because GitHub Actions tokens cannot update that Pages administration field.
 
 ## Environment Configuration
 

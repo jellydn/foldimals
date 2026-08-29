@@ -18,7 +18,9 @@ Deploy with GitHub Pages and official GitHub Actions:
 
 - `.github/workflows/deploy-pages.yml` runs tests, typecheck, lint, and build before publishing `dist/`.
 - The deploy job receives only `pages: write` and OIDC `id-token: write`; the verification job remains read-only.
+- Vite, manifest, and service-worker URLs are path-relative so the generated project URL and custom-domain root both work.
 - `public/CNAME` declares `foldimals.itman.fyi` in the built artifact.
+- The repository owner attaches `foldimals.itman.fyi` in GitHub Pages settings.
 - Cloudflare DNS must publish a DNS-only `CNAME` from `foldimals.itman.fyi` to `jellydn.github.io`.
 - GitHub Pages manages the TLS certificate and HTTPS redirect after DNS validation.
 
@@ -29,7 +31,7 @@ Deploy with GitHub Pages and official GitHub Actions:
 - Deployment is repeatable, versioned with source, and gated by all project checks.
 - No long-lived deployment secret is stored in GitHub or the application.
 - The host provides global static delivery and managed HTTPS suitable for the PWA.
-- The custom domain keeps root-relative manifest and service-worker URLs valid.
+- The same artifact works at the generated project URL before custom-domain DNS is ready.
 
 ### Negative
 

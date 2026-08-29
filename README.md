@@ -55,6 +55,6 @@ bun run build      # production Vite bundle
 
 ## Deployment
 
-Pushes to `main` run all four checks and deploy the `dist/` artifact with the official GitHub Pages actions in [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). The custom domain is declared in [`public/CNAME`](public/CNAME); GitHub Pages provides the TLS certificate and HTTPS redirect after DNS validation.
+Pushes to `main` run all four checks and deploy the `dist/` artifact with the official GitHub Pages actions in [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). The path-relative build works at the generated project URL and the custom domain declared in [`public/CNAME`](public/CNAME). After the repository owner attaches that domain in Pages settings and DNS validates it, GitHub Pages provides the TLS certificate and HTTPS redirect.
 
 See [ADR 0002](docs/adr/0002-deploy-as-a-static-site-on-github-pages.md) for the hosting decision and DNS requirements.

@@ -82,18 +82,18 @@
 6. Completion decoration and uploaded photo are component-local only. The photo uses an object URL and neither it nor `decorated` is persisted (`src/App.tsx`).
 
 **PWA and Offline Flow:**
-1. `index.html` links `public/manifest.webmanifest` and the SVG icon; the manifest requests standalone display and root start URL.
-2. Only production builds register `/sw.js`, after window load (`src/main.tsx`).
-3. Installation pre-caches the root, HTML, manifest, and icon; activation removes cache versions other than `foldimals-v1` (`public/sw.js`).
-4. GET requests use cache-first lookup, then fetch and asynchronously cache responses; a network failure falls back to `/index.html`.
+1. `index.html` links `public/manifest.webmanifest` and the SVG icon with path-relative URLs; the manifest requests standalone display and a scope-relative start URL.
+2. Only production builds register the service worker relative to `document.baseURI`, after window load (`src/main.tsx`).
+3. Installation resolves shell files against the service-worker scope and pre-caches the app root, HTML, manifest, and icon; activation removes cache versions other than `foldimals-v2` (`public/sw.js`).
+4. GET requests use cache-first lookup, then fetch and asynchronously cache responses; a network failure falls back to the scope-relative `index.html`.
 5. Vite emits the hashed application assets consumed at runtime; those are not listed in `APP_SHELL` but become cached after their first successful request.
 
 **Build and Deployment Flow:**
 1. A push to `main` starts `.github/workflows/deploy-pages.yml`.
 2. The read-only verification job installs the locked Bun dependencies and runs tests, typecheck, lint, and the Vite production build.
 3. The workflow uploads only `dist/`, including the copied `public/CNAME`, as the Pages artifact.
-4. A separate deploy job receives `pages: write` and an OIDC token, enables Pages, attaches the custom domain with its short-lived GitHub token, and deploys the artifact.
-5. Cloudflare resolves `foldimals.itman.fyi` to `jellydn.github.io`; GitHub Pages validates the domain and manages TLS.
+4. A separate deploy job receives `pages: write` and an OIDC token, enables/configures Pages, and deploys the path-relative artifact.
+5. The repository owner attaches the custom domain in Pages settings; Cloudflare then resolves `foldimals.itman.fyi` to `jellydn.github.io`, and GitHub Pages validates the domain and manages TLS.
 
 **State Management:**
 - `App` is the sole owner of navigation, selected lesson, and persistent progress (`src/App.tsx`).

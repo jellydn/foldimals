@@ -51,10 +51,6 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
-      - name: Configure custom domain
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/pages" -f cname=foldimals.itman.fyi >/dev/null
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
