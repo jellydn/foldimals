@@ -26,7 +26,8 @@ Directory layout, key locations, and naming conventions.
 │   ├── types.ts                        # Domain contracts
 │   ├── storage.ts                      # localStorage persistence
 │   ├── data/
-│   │   └── lessons.ts                  # Curriculum + fold-guide coordinates│   ├── components/
+│   │   └── lessons.ts                  # Curriculum + fold-guide coordinates
+│   ├── components/
 │   │   ├── AnimalArt.tsx               # Finished-origami SVG per animal
 │   │   ├── OrigamiCanvas.tsx           # Per-step SVG fold/target diagram (typed DiagramId)
 │   │   ├── FoldingPlayer.tsx            # Step-through lesson player screen

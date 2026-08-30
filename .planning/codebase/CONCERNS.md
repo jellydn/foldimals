@@ -8,19 +8,15 @@ Foldimals is small and healthy, but several areas carry manual, release-time ris
 
 ## Technical Debt & Maintainability
 
-- **Monolithic `src/App.tsx`.** All five screens (`Home`, `Preview`, `Completion`, `Collection`, `AppHeader`, `AnimalCard`) plus routing and state live in one ~250-line file. It's manageable now but trending toward component-file extraction would improve readability and testability.
 - **Hand-rolled routing (`Screen` union)** — fine for 5 screens; a competitor/router is unnecessary, but there's no deep-linking or back/forward history support (e.g. refresh lands on `home` regardless).
 - **`lessons.ts` is data-heavy with hand-authored coordinates.** The `guide(...)` compact tuples are hard to read/verify visually; correctness of folds relies on manual review rather than rendering tests.
-- **Duplicated geometry between data & renderer.** `diagram` string vocabulary must stay in sync with `PaperDiagram` branches in `OrigamiCanvas.tsx` and pose branches in `AnimalArt.tsx`. Adding a new fold type touches data + renderer with no compile-time coupling between them (arbitrary strings).
 - **`renovate.json` present but no visible config tuning** (default renovate behavior). Minor.
 
 ## Potential Bugs & Fragile Areas
 
 - **`FoldingPlayer` `helpLevel`/replay coupling:** `askForHelp` increments `helpLevel` and replays; state transitions (0→1→2) drive slow/detailed modes. Logic is concentrated in one component; further help modes would need refactor. Edge: `goToStep` resets help but `replay` alone preserves it.
-- **`isFinal` relies on `diagram.endsWith('final')` string convention.** Any lesson step named e.g. `*-final-eared` would accidentally be treated as final; brittle to naming.
-- **Progress `current[id]` indexing:** `updateStep` keys by the *currently selected* animal. If a user switches animals mid-lesson the persisted step tracks per-id correctly via `progress.current[id]`, but there's no validation that a persisted `current` index is `< steps.length` — a stale/corrupt index is clamped only in `FoldingPlayer` (`Math.min(initialStep, steps.length - 1)`), and `storage.ts` doesn't sanitize numeric bounds.
 - **Browser state loss:** progress is unsynced across devices and lost when site data is cleared (documented in ADR 0001, acceptable for target audience, but worth flagging if multi-device ever matters).
-- **Photo handling:** `Completion` uses object URLs that are never revoked — a minor memory consideration; photo is also lost on reload (by design, never persisted).
+- **Photo handling:** completion photos are intentionally ephemeral and lost on reload; they are never persisted or uploaded.
 
 ## Security & Privacy
 
@@ -40,10 +36,6 @@ Foldimals is small and healthy, but several areas carry manual, release-time ris
 | Area | Risk | Mitigation |
 | --- | --- | --- |
 | Hand-authored fold geometry | **High** — visual correctness of the core product | Rigorous manual review; add rendering/snapshot tests |
-| Diagram-string ↔ renderer coupling | **Medium** — data/renderer can drift silently | Type the `diagram` union; centralize the vocabulary |
-| `App.tsx` monolith | **Medium** — long-term readability/testability | Extract per-screen components; add component tests |
-| Persisted `current` index bounds | **Low-Medium** — stale index if corrupt | Sanitize/bound in `storage.ts` |
-| Object-URL lifecycle | **Low** | Revoke URLs after preview |
 | Service-worker cache versioning | **Low** | Keep `CACHE` version bumped on asset changes |
 | No error monitoring | **Low** (static app) | Acceptable for scope; revisit if it grows |
 

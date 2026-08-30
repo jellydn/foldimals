@@ -21,12 +21,13 @@ Installs and stubs browser globals so jsdom behaves predictably:
 
 | File | Coverage |
 | --- | --- |
-| `src/App.test.tsx` | End-to-end screen flow: only Dog unlocked at start; entering Dog and stepping to preview/player; restoring saved progress from storage and unlocking progressed animals; completing a lesson → adds to collection → unlocks next animal |
+| `src/App.test.tsx` | App integration journey: only Dog unlocked at start; entering Dog and stepping to preview/player; restoring saved progress from storage and unlocking progressed animals; completing a lesson → adds to collection → unlocks next animal |
 | `src/storage.test.ts` | Persistence resilience (missing/corrupt JSON → `emptyProgress`); `saveProgress` writes correct key/values; `completeAnimal` completes an animal once (no duplicates) |
 | `src/data/lessons.test.ts` | Curriculum invariants: five lessons in progression order; declared per-lesson step ranges (`[6,6,7,8,9]`); every step has a defined `guide`; `isLessonUnlocked` unlocking rules |
 | `src/components/FoldingPlayer.test.tsx` | Step advancement (one fold at a time); progressive help (I need help → Show me more help → hint + target text); hint cleared when advancing |
 | `src/components/OrigamiCanvas.test.tsx` | Fold diagram renders crease/arrow; `detailedHelp` emphasizes crease + target dots; `slow` adds `is-slow` class; final step shows the finished animal instead of a diagram |
 | `src/components/AnimalArt.test.tsx` | Renders a labeled svg for each animal; accepts `className`; decorative stars appear only when `decorated` |
+| `src/components/Completion.test.tsx` | Replacing a photo revokes its object URL; unmounting revokes the final active URL |
 
 ## Patterns
 
@@ -65,5 +66,5 @@ bun run build                   # typecheck + vite build
 ## Known Gaps / Opportunities
 
 - `OrigamiCanvas` and `AnimalArt` now have direct unit tests.
-- `Collection` and `Completion` (photo decorate/upload) are only covered indirectly through the App journey.
+- `Collection` is covered indirectly through the App journey; decoration interactions still lack direct coverage.
 - No snapshot or visual-regression tests; geometry bug risk lives in hand-authored guide coordinates in `lessons.ts`.

@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import type { AnimalLesson, DiagramId, FoldStep } from '../types'
 import { AnimalArt } from './AnimalArt'
 
@@ -12,170 +11,82 @@ interface OrigamiCanvasProps {
 
 const paperStyle = { stroke: '#27324a', strokeWidth: 4, strokeLinejoin: 'round' as const }
 
-type Shape = { kind: 'none' } | { kind: 'polygon'; points: string; fill?: string } | { kind: 'rect'; x: string; y: string; w: string; h: string } | { kind: 'circle'; cx: number; cy: number; r: number; fill?: string } | { kind: 'group'; shapes: Shape[] }
-
-function diagramShapes(diagram: DiagramId): Shape {
-  const build = (shapes: Shape[]) => ({ kind: 'group' as const, shapes })
-  const polygon = (points: string, fill?: string) => ({ kind: 'polygon' as const, points, fill })
-
+function PaperDiagram({ diagram, color }: { diagram: DiagramId; color: string }) {
   switch (diagram) {
     case 'diamond':
-      return polygon('150,38 262,150 150,262 38,150')
     case 'square-cross':
-      return polygon('150,38 262,150 150,262 38,150')
+      return <polygon points="150,38 262,150 150,262 38,150" fill={color} {...paperStyle} />
     case 'rectangle':
-      return { kind: 'rect', x: '75', y: '38', w: '150', h: '224' }
+      return <rect x="75" y="38" width="150" height="224" rx="2" fill={color} {...paperStyle} />
     case 'triangle-down':
-      return polygon('38,75 262,75 150,245')
+      return <polygon points="38,75 262,75 150,245" fill={color} {...paperStyle} />
     case 'triangle-up':
-      return polygon('38,225 262,225 150,55')
+      return <polygon points="38,225 262,225 150,55" fill={color} {...paperStyle} />
     case 'triangle-side':
-      return polygon('72,38 250,150 72,262')
+      return <polygon points="72,38 250,150 72,262" fill={color} {...paperStyle} />
     case 'dog-ear-left':
-      return build([
-        polygon('52,78 248,78 150,238'),
-        polygon('52,78 98,100 65,190', '#e7a752'),
-      ])
     case 'dog-ears':
-      return build([
-        polygon('52,78 248,78 150,238'),
-        polygon('52,78 98,100 65,190', '#e7a752'),
-        polygon('248,78 202,100 235,190', '#e7a752'),
-      ])
     case 'dog-snout':
-      return build([
-        polygon('52,78 248,78 150,238'),
-        polygon('52,78 98,100 65,190', '#e7a752'),
-        polygon('248,78 202,100 235,190', '#e7a752'),
-        polygon('120,190 180,190 150,238', '#f7d28b'),
-      ])
+      return <g>
+        <polygon points="52,78 248,78 150,238" fill={color} {...paperStyle} />
+        <polygon points="52,78 98,100 65,190" fill="#e7a752" {...paperStyle} />
+        {diagram !== 'dog-ear-left' && <polygon points="248,78 202,100 235,190" fill="#e7a752" {...paperStyle} />}
+        {diagram === 'dog-snout' && <polygon points="120,190 180,190 150,238" fill="#f7d28b" {...paperStyle} />}
+      </g>
     case 'dog-final':
     case 'cat-final':
     case 'mouse-final':
     case 'frog-final':
     case 'bird-final':
-      return { kind: 'none' }
+      return null
     case 'cat-ear-left':
-      return build([
-        polygon('45,220 255,220 150,58'),
-        polygon('45,220 96,185 76,82'),
-      ])
     case 'cat-ears':
-      return build([
-        polygon('45,220 255,220 150,58'),
-        polygon('45,220 96,185 76,82'),
-        polygon('255,220 204,185 224,82'),
-      ])
     case 'cat-head':
-      return build([
-        polygon('45,220 255,220 150,58'),
-        polygon('45,220 96,185 76,82'),
-        polygon('255,220 204,185 224,82'),
-        polygon('126,96 174,96 150,58', '#9b87ec'),
-      ])
+      return <g>
+        <polygon points="45,220 255,220 150,58" fill={color} {...paperStyle} />
+        <polygon points="45,220 96,185 76,82" fill={color} {...paperStyle} />
+        {diagram !== 'cat-ear-left' && <polygon points="255,220 204,185 224,82" fill={color} {...paperStyle} />}
+        {diagram === 'cat-head' && <polygon points="126,96 174,96 150,58" fill="#9b87ec" {...paperStyle} />}
+      </g>
     case 'mouse-kite-top':
-      return build([polygon('45,150 235,62 235,238')])
     case 'mouse-kite':
-      return build([
-        polygon('45,150 235,62 235,238'),
-        polygon('45,150 208,110 208,190', '#70c5b5'),
-      ])
     case 'mouse-ear':
-      return build([
-        polygon('45,150 235,62 235,238'),
-        polygon('45,150 208,110 208,190', '#70c5b5'),
-        { kind: 'circle', cx: 210, cy: 150, r: 35, fill: '#f5b9c8' },
-      ])
     case 'mouse-nose':
-      return build([
-        polygon('45,150 235,62 235,238'),
-        polygon('45,150 208,110 208,190', '#70c5b5'),
-        { kind: 'circle', cx: 210, cy: 150, r: 35, fill: '#f5b9c8' },
-      ])
+      return <g>
+        <polygon points="45,150 235,62 235,238" fill={color} {...paperStyle} />
+        {diagram !== 'mouse-kite-top' && <polygon points="45,150 208,110 208,190" fill="#70c5b5" {...paperStyle} />}
+        {(diagram === 'mouse-ear' || diagram === 'mouse-nose') && <circle cx="210" cy="150" r="35" fill="#f5b9c8" {...paperStyle} />}
+      </g>
     case 'frog-roof':
-      return build([
-        { kind: 'rect', x: '55', y: '82', w: '190', h: '150' },
-        polygon('55,82 150,35 245,82 150,148', '#b9e874'),
-      ])
     case 'frog-triangle':
-      return build([
-        { kind: 'rect', x: '55', y: '82', w: '190', h: '150' },
-        polygon('55,82 150,35 245,82 150,148', '#b9e874'),
-      ])
     case 'frog-body':
-      return build([
-        { kind: 'rect', x: '55', y: '82', w: '190', h: '150' },
-        polygon('55,82 150,35 245,82 150,148', '#b9e874'),
-      ])
     case 'frog-side-left':
-      return build([
-        { kind: 'rect', x: '55', y: '82', w: '190', h: '150' },
-        polygon('55,82 150,35 245,82 150,148', '#b9e874'),
-        polygon('55,150 105,122 105,232 55,232', '#83bc46'),
-      ])
     case 'frog-sides':
-      return build([
-        { kind: 'rect', x: '55', y: '82', w: '190', h: '150' },
-        polygon('55,82 150,35 245,82 150,148', '#b9e874'),
-        polygon('55,150 105,122 105,232 55,232', '#83bc46'),
-        polygon('245,150 195,122 195,232 245,232', '#83bc46'),
-      ])
+      return <g>
+        <rect x="55" y="82" width="190" height="150" fill={color} {...paperStyle} />
+        <polygon points="55,82 150,35 245,82 150,148" fill="#b9e874" {...paperStyle} />
+        {(diagram === 'frog-side-left' || diagram === 'frog-sides') && <polygon points="55,150 105,122 105,232 55,232" fill="#83bc46" {...paperStyle} />}
+        {diagram === 'frog-sides' && <polygon points="245,150 195,122 195,232 245,232" fill="#83bc46" {...paperStyle} />}
+      </g>
     case 'bird-kite':
-      return build([polygon('150,35 242,150 150,265 58,150')])
     case 'bird-diamond':
-      return build([
-        polygon('150,35 242,150 150,265 58,150'),
-        polygon('58,150 150,80 242,150 150,220', '#6aaee1'),
-      ])
     case 'bird-wing-one':
-      return build([
-        polygon('150,35 242,150 150,265 58,150'),
-        polygon('58,150 150,80 242,150 150,220', '#6aaee1'),
-        polygon('150,80 96,205 150,175', '#4a92ce'),
-      ])
     case 'bird-wings':
-      return build([
-        polygon('150,35 242,150 150,265 58,150'),
-        polygon('58,150 150,80 242,150 150,220', '#6aaee1'),
-        polygon('150,80 96,205 150,175', '#4a92ce'),
-        polygon('150,80 204,205 150,175', '#91c8ed'),
-      ])
     case 'bird-head':
     case 'bird-beak':
-      return build([
-        polygon('150,35 242,150 150,265 58,150'),
-        polygon('58,150 150,80 242,150 150,220', '#6aaee1'),
-        polygon('150,80 96,205 150,175', '#4a92ce'),
-        polygon('150,80 204,205 150,175', '#91c8ed'),
-      ])
+      return <g>
+        <polygon points="150,35 242,150 150,265 58,150" fill={color} {...paperStyle} />
+        {diagram !== 'bird-kite' && <polygon points="58,150 150,80 242,150 150,220" fill="#6aaee1" {...paperStyle} />}
+        {diagram !== 'bird-kite' && diagram !== 'bird-diamond' && <polygon points="150,80 96,205 150,175" fill="#4a92ce" {...paperStyle} />}
+        {(diagram === 'bird-wings' || diagram === 'bird-head' || diagram === 'bird-beak') && <polygon points="150,80 204,205 150,175" fill="#91c8ed" {...paperStyle} />}
+      </g>
   }
 }
+
+const finalDiagrams = new Set<DiagramId>(['dog-final', 'cat-final', 'mouse-final', 'frog-final', 'bird-final'])
 
 function isFinalDiagram(diagram: DiagramId): boolean {
-  return diagram.endsWith('final')
-}
-
-function PaperDiagram({ diagram, color }: { diagram: DiagramId; color: string }) {
-  if (isFinalDiagram(diagram)) return null
-
-  const shapes = diagramShapes(diagram)
-
-  const renderShapes = (group: Shape): ReactNode => {
-    switch (group.kind) {
-      case 'none':
-        return null
-      case 'polygon':
-        return <polygon points={group.points} fill={group.fill ?? color} {...paperStyle} />
-      case 'rect':
-        return <rect x={group.x} y={group.y} width={group.w} height={group.h} rx="2" fill={color} {...paperStyle} />
-      case 'circle':
-        return <circle cx={group.cx} cy={group.cy} r={group.r} fill={group.fill ?? color} {...paperStyle} />
-      case 'group':
-        return <g>{group.shapes.map((shape, index) => <g key={index}>{renderShapes(shape)}</g>)}</g>
-    }
-  }
-
-  return renderShapes(shapes)
+  return finalDiagrams.has(diagram)
 }
 
 export function OrigamiCanvas({ lesson, step, animationKey, slow, detailedHelp }: OrigamiCanvasProps) {

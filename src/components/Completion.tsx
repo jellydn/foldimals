@@ -1,25 +1,24 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { AnimalLesson } from '../types'
 import { AnimalArt } from './AnimalArt'
 
 export function Completion({ lesson, onAnother, onCollection }: { lesson: AnimalLesson; onAnother: () => void; onCollection: () => void }) {
   const [decorated, setDecorated] = useState(false)
   const [photo, setPhoto] = useState<string>()
+  const photoUrl = useRef<string | undefined>(undefined)
 
   const addPhoto = useCallback((file?: File) => {
     if (!file) return
-    setPhoto((prev) => {
-      if (prev) URL.revokeObjectURL(prev)
-      return URL.createObjectURL(file)
-    })
+    if (photoUrl.current) URL.revokeObjectURL(photoUrl.current)
+    photoUrl.current = URL.createObjectURL(file)
+    setPhoto(photoUrl.current)
   }, [])
 
   useEffect(() => {
-    const url = photo
     return () => {
-      if (url) URL.revokeObjectURL(url)
+      if (photoUrl.current) URL.revokeObjectURL(photoUrl.current)
     }
-  }, [photo])
+  }, [])
 
   return <main className="completion-page">
     <div className="confetti" aria-hidden="true">✦ · ★ · ✦</div>
