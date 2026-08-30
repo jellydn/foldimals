@@ -1,171 +1,93 @@
-# Architecture
+# ARCHITECTURE.md — Foldimals
 
-**Analysis Date:** 2026-08-29
+System patterns, layers, data flow, and abstractions for the Foldimals codebase.
 
-## Pattern Overview
+## Overview
 
-**Overall:** Client-only, state-driven React single-page PWA with static lesson content
+Foldimals is a **single-page, client-only React PWA**. One root component (`App`) is the only routing layer — it switches between five screens via a local `Screen` union with **no router library**. Curriculum content is plain typed data in `src/data/lessons.ts`, and a single reusable, lesson-agnostic player renders it. All personalization/state is embedded in the data contracts; all durable state lives in `localStorage`.
 
-**Key Characteristics:**
-- One React root owns navigation and durable progress; there is no router, backend, API, authentication, or global state library (`src/main.tsx`, `src/App.tsx`).
-- Screens are conditional views of a small finite state (`home`, `preview`, `player`, `complete`, `collection`) rather than URL-addressable routes (`src/App.tsx`).
-- Curriculum and diagrams are typed static data, while the folding player is reusable across animals (`src/data/lessons.ts`, `src/types.ts`, `src/components/FoldingPlayer.tsx`).
-- Browser `localStorage` supplies all durable user state, and a hand-written service worker supplies offline app-shell/runtime caching (`src/storage.ts`, `public/sw.js`).
+## Layering
 
-## Layers
+```text
+src/types.ts            # contracts (shared vocabulary)
+src/data/lessons.ts     # curriculum data + pure helpers
+src/storage.ts          # persistence abstraction over localStorage
+src/components/         # presentation pieces (AnimalArt, OrigamiCanvas, FoldingPlayer)
+src/App.tsx             # screen flow + state orchestration
+src/main.tsx            # bootstrap + PWA service-worker registration
+```
 
-**Bootstrap and PWA Shell:**
-- Purpose: Mount the application, load global styles, expose install metadata, and register offline support in production.
-- Location: `index.html`, `src/main.tsx`, `src/styles.css`, `public/manifest.webmanifest`, `public/sw.js`
-- Contains: HTML root, React bootstrap, service-worker registration, responsive presentation, manifest, and cache handlers.
-- Depends on: React DOM, browser DOM/service worker/cache APIs, Vite production environment flags.
-- Used by: The browser and installed PWA runtime.
+### 1. Contracts — `src/types.ts`
 
-**Application Orchestration and Screens:**
-- Purpose: Own screen flow, selected lesson, progress state, and screen-level UI.
-- Location: `src/App.tsx`
-- Contains: `App`, `AppHeader`, `Home`, `AnimalCard`, `Preview`, `Completion`, and `Collection`.
-- Depends on: Lesson queries, storage functions, shared types, `AnimalArt`, and `FoldingPlayer`.
-- Used by: `src/main.tsx`.
+Defines the domain vocabulary that keeps layers decoupled:
 
-**Reusable Player and Rendering:**
-- Purpose: Execute a lesson one fold at a time and turn lesson diagram identifiers/guides into visual instructions.
-- Location: `src/components/FoldingPlayer.tsx`, `src/components/OrigamiCanvas.tsx`, `src/components/AnimalArt.tsx`
-- Contains: Per-session step/help/replay state, generic controls, SVG fold diagrams, guides, targets, and finished animal art.
-- Depends on: `AnimalLesson`, `FoldStep`, and `AnimalId` contracts from `src/types.ts`; content passed from the application layer.
-- Used by: `src/App.tsx` and completion/home/collection/player views.
+- `AnimalId = 'dog' | 'cat' | 'mouse' | 'frog' | 'bird'`
+- `Point` / `FoldGuide` (`line`, `arrow`, `targets`) — geometry for SVG fold guides
+- `FoldStep` (`id`, `instruction`, `hint`, `diagram`, `guide`)
+- `AnimalLesson` (`id`, `name`, `tagline`, `difficulty`, `minutes`, `color`, `paperColor`, `steps`)
+- `SavedProgress` (`completed: AnimalId[]`, `current: Partial<Record<AnimalId, number>>`)
 
-**Content and Domain Model:**
-- Purpose: Define the curriculum, progression order, visual metadata, fold instructions, and domain contracts.
-- Location: `src/data/lessons.ts`, `src/types.ts`
-- Contains: Five ordered `AnimalLesson` records, guide-coordinate helpers, `getLesson`, `isLessonUnlocked`, and TypeScript interfaces.
-- Depends on: No UI or persistence code; `src/data/lessons.ts` imports only domain types.
-- Used by: `src/App.tsx`, player/rendering components, storage typing, and tests.
+### 2. Curriculum data — `src/data/lessons.ts`
 
-**Persistence:**
-- Purpose: Load, save, and transform local progress.
-- Location: `src/storage.ts`
-- Contains: Versioned key `foldimals-progress-v1`, empty state, defensive JSON loading, serialization, and idempotent completion logic.
-- Depends on: Browser `Storage` and `SavedProgress`/`AnimalId` types.
-- Used by: `src/App.tsx`; injectable storage subsets are used by `src/storage.test.ts`.
+- Exports `lessons: AnimalLesson[]` in **progression order** (Dog → Cat → Mouse → Frog → Bird).
+- `guide()` and `point()` builders keep coordinates compact.
+- Pure helpers `getLesson(id)` and `isLessonUnlocked(index, completed)` control selection and unlocking: index 0 always unlocked; each later lesson unlocks only when the previous animal is completed.
 
-**Delivery:**
-- Purpose: Gate and publish the static production bundle to the custom HTTPS origin.
-- Location: `.github/workflows/deploy-pages.yml`, `public/CNAME`
-- Contains: Bun setup, install/test/typecheck/lint/build steps, Pages artifact upload, least-privilege OIDC deployment, and the `foldimals.itman.fyi` domain declaration.
-- Depends on: GitHub Actions/Pages and an external Cloudflare DNS-only CNAME.
-- Used by: Pushes to `main` and manual workflow dispatches.
+### 3. Persistence — `src/storage.ts`
 
-## Data Flow
+- `loadProgress` / `saveProgress` / `completeAnimal` around key `foldimals-progress-v1`.
+- Accept an injectable `Pick<Storage, 'getItem'|'setItem'>` (defaults to `localStorage`) — this makes them unit-testable and keeps the app independent of a concrete storage.
+- `loadProgress` defensively handles missing/corrupt JSON and returns `emptyProgress`.
 
-**Screen Flow:**
-1. `src/main.tsx` mounts `App`; `App` starts on `home`, selects Dog by default, and lazily initializes progress with `loadProgress`.
-2. Home renders ordered cards from `lessons`; `isLessonUnlocked` enables Dog or a lesson whose immediate predecessor is completed.
-3. Selecting an enabled card stores its `AnimalId` and moves `home` or `collection` to `preview`; preview starts/resumes `player` from `progress.current[id]`.
-4. `FoldingPlayer` advances locally through steps, exits back to `preview`, or calls completion on its final action.
-5. Completion updates progress and shows `complete`; the user then returns to `home`, opens `collection`, or can later select a completed animal to fold again.
-6. Header actions reach `home` or `collection` from every shell screen; the full-screen player intentionally replaces the shell and exposes its own exit control.
+### 4. Presentation components — `src/components/`
 
-**Lesson Playback and Player/Content Boundary:**
-1. `src/App.tsx` resolves the selected ID through `getLesson` and passes the complete `AnimalLesson` to `FoldingPlayer`.
-2. `FoldingPlayer` interprets only generic lesson fields (`steps`, color, instruction, hint) and owns ephemeral `stepIndex`, `animationKey`, and `helpLevel`.
-3. `OrigamiCanvas` receives the active `FoldStep`; `diagram` selects a hard-coded SVG paper state, while `guide.line`, `guide.arrow`, and `guide.targets` drive generic overlays.
-4. Final diagram names ending in `final` switch from the fold diagram to reusable `AnimalArt`.
-5. Thus lesson copy/coordinates/order live in `src/data/lessons.ts`, but supported diagram vocabulary and animal geometry must also be implemented in `src/components/OrigamiCanvas.tsx` and `src/components/AnimalArt.tsx`.
+- **`AnimalArt`** — renders the completed origami animal as inline SVG for any `AnimalId`; supports an optional `decorated` stars overlay.
+- Screen components — `AppHeader`, `AnimalCard`, `Home`, `Preview`, `Completion`, and `Collection` extracted from `App.tsx`; `Completion` revokes object URLs on change/unmount.
+- **`OrigamiCanvas`** — pure SVG renderer for a single fold step: draws the paper diagram (`PaperDiagram`), the crease line, the fold arrow (with SVG `marker` arrowhead), and optional highlighted target dots. Re-mounts on a React `key` (`animationKey`) to retrigger CSS animation; a `slow`/"detailed help" flag toggles emphasis.
+- **`FoldingPlayer`** — screen for stepping through one `AnimalLesson`. Owns `stepIndex`, `animationKey`, and `helpLevel` (0 = default, 1 = slow replay, 2 = detailed targets + hint). Calls `onStepChange`, `onExit`, `onComplete`; never imports lesson content directly.
 
-**State and Persistence Flow:**
-1. Durable `SavedProgress` consists of `completed: AnimalId[]` and `current: Partial<Record<AnimalId, number>>` (`src/types.ts`).
-2. `App` initializes this state from local storage; malformed or absent JSON falls back to `emptyProgress` (`src/storage.ts`).
-3. Every player step effect calls `onStepChange`; `App.updateStep` immutably records the selected animal's zero-based step.
-4. A `useEffect` in `App` serializes every progress change to `localStorage`.
-5. Finishing calls `completeAnimal`, which adds the ID once and resets its current step to zero; this completion then unlocks the next ordered lesson.
-6. Completion decoration and uploaded photo are component-local only. The photo uses an object URL and neither it nor `decorated` is persisted (`src/App.tsx`).
+### 5. Screen orchestration — `src/App.tsx`
 
-**PWA and Offline Flow:**
-1. `index.html` links `public/manifest.webmanifest` and the SVG icon with path-relative URLs; the manifest requests standalone display and a scope-relative start URL.
-2. Only production builds register the service worker relative to `document.baseURI`, after window load (`src/main.tsx`).
-3. Installation resolves shell files against the service-worker scope and pre-caches the app root, HTML, manifest, and icon; activation removes cache versions other than `foldimals-v2` (`public/sw.js`).
-4. GET requests use cache-first lookup, then fetch and asynchronously cache responses; a network failure falls back to the scope-relative `index.html`.
-5. Vite emits the hashed application assets consumed at runtime; those are not listed in `APP_SHELL` but become cached after their first successful request.
+- Holds app-wide state: `screen`, `selectedId`, and `progress` (loaded once from storage).
+- Clamps persisted `current[id]` step indices against lesson step counts via `clampStepIndices` on load.
+- Five screens: `home` | `preview` | `player` | `complete` | `collection`.
+- Owns pure reducer-style helpers `updateStep`, `finish`, `home`, `choose` that mutate `progress` through `setProgress`.
+- Critical flow: on `finish()`, calls `completeAnimal` (marks completed, resets current step) then shows completion.
+- Persists `progress` via `useEffect` whenever it changes.
 
-**Build and Deployment Flow:**
-1. A push to `main` starts `.github/workflows/deploy-pages.yml`.
-2. The read-only verification job installs the locked Bun dependencies and runs tests, typecheck, lint, and the Vite production build.
-3. The workflow uploads only `dist/`, including the copied `public/CNAME`, as the Pages artifact.
-4. A separate deploy job receives `pages: write` and an OIDC token, enables/configures Pages, and deploys the path-relative artifact.
-5. The repository owner attaches the custom domain in Pages settings; Cloudflare then resolves `foldimals.itman.fyi` to `jellydn.github.io`, and GitHub Pages validates the domain and manages TLS.
+### 6. Bootstrap — `src/main.tsx`
 
-**State Management:**
-- `App` is the sole owner of navigation, selected lesson, and persistent progress (`src/App.tsx`).
-- `FoldingPlayer` owns lesson-session UI state, and `Completion` owns nonpersistent decoration/photo state.
-- Parent callbacks are the only state boundary; there is no context, reducer, external store, URL state, or server synchronization.
+- `createRoot` renders `<App/>` in `<StrictMode/>`.
+- Conditionally registers `public/sw.js` **only in production** (`import.meta.env.PROD`).
 
-## Key Abstractions
+## Key Data Flow
 
-**AnimalLesson / FoldStep:**
-- Purpose: Stable, typed contract between curriculum content and generic playback UI.
-- Examples: `src/types.ts`, `src/data/lessons.ts`
-- Pattern: Data-driven content records with SVG-coordinate guide metadata.
+```text
+lessons.ts ──┬──> Home cards (unlock via isLessonUnlocked)
+             └──> Preview ──> FoldingPlayer ──> onStepChange
+                                                └──> onComplete
+                                                     └──> App.finish ─> completeAnimal ─> Completion + localStorage
+```
 
-**FoldingPlayer:**
-- Purpose: Reusable state machine for previous/next, replay, and two-level progressive help across all lessons.
-- Examples: `src/components/FoldingPlayer.tsx`, `src/components/FoldingPlayer.test.tsx`
-- Pattern: Controlled boundary for progress callbacks with internal ephemeral interaction state.
+1. **Rendering a step:** `App` → `FoldingPlayer` (holds `stepIndex`) → `OrigamiCanvas` gets `lesson.steps[stepIndex]` + a `FoldStep` → SVG.
+2. **Resuming:** `FoldingPlayer` is initialized with `initialStep` from `progress.current[selectedId]`.
+3. **Persistence:** every step change triggers `App.updateStep` → `setProgress` → `useEffect` → `saveProgress`.
+4. **Progression:** completing the last step of a lesson fires `onComplete` → `App.finish` records completion and unlocks the next animal.
 
-**OrigamiCanvas / AnimalArt:**
-- Purpose: Render instruction-state paper geometry and reusable final animal illustrations.
-- Examples: `src/components/OrigamiCanvas.tsx`, `src/components/AnimalArt.tsx`
-- Pattern: Declarative SVG components selected by content IDs/naming conventions.
+## State Management
 
-**Progress Storage Functions:**
-- Purpose: Isolate browser serialization and completion transforms from UI code.
-- Examples: `src/storage.ts`, `src/storage.test.ts`
-- Pattern: Small functional adapter with dependency injection via `Pick<Storage, ...>`.
+- **No global state library.** App state is `useState` in `App`; transient player state (`stepIndex`, `helpLevel`, `animationKey`) is local `useState` in `FoldingPlayer`.
+- `useCallback` stabilizes `updateStep` to keep the `FoldingPlayer` effect dependency stable.
+- Progress is "lifted" to `App` (single source of truth), while per-visit UI state stays in leaf components.
 
-## Entry Points
+## Abstraction & Extension Points
 
-**Browser Document:**
-- Location: `index.html`
-- Triggers: Initial navigation or service-worker fallback.
-- Responsibilities: Supply metadata/root element and load `/src/main.tsx` through Vite.
+- **Adding a new animal/lesson:** add a `AnimalLesson` to `lessons.ts` (with `steps`, guides, colors). The player and canvas are lesson-agnostic, so likely **no component changes** — unless the new model needs a new `diagram` string, which requires a `PaperDiagram` branch in `OrigamiCanvas` and a pose branch in `AnimalArt`.
+- **Changing persistence:** `storage.ts` isolates the storage implementation (per ADR 0001's injectable `Storage`), so a future backend sync could swap it without touching components.
+- **New screen:** add a value to the `Screen` union, a render branch in `App`, and state to drive it.
 
-**React Runtime:**
-- Location: `src/main.tsx`
-- Triggers: Module script execution.
-- Responsibilities: Mount `App` in `StrictMode`, import global CSS, and register the production service worker.
+## Security & Privacy Model
 
-**Application Controller:**
-- Location: `src/App.tsx`
-- Triggers: React root render and user navigation/actions.
-- Responsibilities: Resolve screens and lessons, coordinate progress, and connect UI to persistence.
-
-**Service Worker:**
-- Location: `public/sw.js`
-- Triggers: Production registration followed by install, activate, and fetch events.
-- Responsibilities: Cache the app shell, cache fetched GET resources, clean old caches, and provide HTML fallback.
-
-**Deployment Workflow:**
-- Location: `.github/workflows/deploy-pages.yml`
-- Triggers: Push to `main` or manual dispatch.
-- Responsibilities: Run the release gate, build `dist/`, and publish through GitHub Pages without long-lived deployment secrets.
-
-## Error Handling
-
-**Strategy:** Prefer safe local fallback for persisted data; otherwise rely on browser/React behavior without a centralized error channel.
-
-**Patterns:**
-- `loadProgress` catches storage/JSON failures and returns `emptyProgress`; it also shape-checks top-level fields (`src/storage.ts`).
-- `getLesson` may return `undefined`; `App` falls back to the first lesson, and collection rendering skips unknown IDs (`src/App.tsx`).
-- The service worker converts failed GET fetches to cached HTML, but registration, cache writes, and `saveProgress` errors are not surfaced (`src/main.tsx`, `public/sw.js`, `src/storage.ts`).
-
-## Cross-Cutting Concerns
-
-**Logging:** No application logging, analytics, or telemetry is present.
-
-**Validation:** TypeScript constrains authored content at build time; local progress receives only shallow runtime shape checks, with no validation that IDs or step indexes belong to current lessons (`src/types.ts`, `src/storage.ts`). File selection is browser-filtered with `accept="image/*"` (`src/App.tsx`).
-
-**Authentication:** None. The app is entirely local and has no user identity, authorization boundary, or remote data.
-
----
-
-*Architecture analysis: 2026-08-29*
+- Photos are previewed on-device via object URLs and never uploaded.
+- Service worker caches only static app assets.
+- No PII is collected; progress is anonymous local storage.
