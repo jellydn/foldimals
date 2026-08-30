@@ -1,5 +1,39 @@
 export type AnimalId = 'dog' | 'cat' | 'mouse' | 'frog' | 'bird'
 
+export type DiagramId =
+  | 'diamond'
+  | 'square-cross'
+  | 'rectangle'
+  | 'triangle-down'
+  | 'triangle-up'
+  | 'triangle-side'
+  | 'dog-ear-left'
+  | 'dog-ears'
+  | 'dog-snout'
+  | 'dog-final'
+  | 'cat-ear-left'
+  | 'cat-ears'
+  | 'cat-head'
+  | 'cat-final'
+  | 'mouse-kite-top'
+  | 'mouse-kite'
+  | 'mouse-ear'
+  | 'mouse-nose'
+  | 'mouse-final'
+  | 'frog-roof'
+  | 'frog-triangle'
+  | 'frog-body'
+  | 'frog-side-left'
+  | 'frog-sides'
+  | 'frog-final'
+  | 'bird-kite'
+  | 'bird-diamond'
+  | 'bird-wing-one'
+  | 'bird-wings'
+  | 'bird-head'
+  | 'bird-beak'
+  | 'bird-final'
+
 export interface Point {
   x: number
   y: number
@@ -15,7 +49,7 @@ export interface FoldStep {
   id: string
   instruction: string
   hint: string
-  diagram: string
+  diagram: DiagramId
   guide: FoldGuide
 }
 

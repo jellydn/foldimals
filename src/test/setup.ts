@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest'
 
 Object.defineProperty(window, 'scrollTo', { value: () => undefined, writable: true })
 Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:photo', writable: true })
+Object.defineProperty(URL, 'revokeObjectURL', { value: () => undefined, writable: true })
 
 const values = new Map<string, string>()
 const storage: Storage = {

@@ -1,143 +1,70 @@
-# Testing Patterns
+# TESTING.md — Foldimals
 
-**Analysis Date:** 2026-08-29
+Framework, structure, mocking, and coverage for the Foldimals codebase.
 
-## Test Framework
+## Framework & Setup
 
-**Runner:**
-- Vitest 4 (`^4.0.0` in `package.json`; `4.1.11` resolved in `bun.lock`)
-- Config: `vite.config.ts` uses the `jsdom` environment, loads `./src/test/setup.ts`, and enables global test APIs.
+- **Vitest** (`^4.0.0`) with `globals: true`, `environment: 'jsdom'`, run single-pass via `bun run test` (`vitest run` — **not** watch mode).
+- Setup file: `src/test/setup.ts`, referenced from `vite.config.ts` (`test.setupFiles`).
+- DOM matchers from `@testing-library/jest-dom/vitest` are loaded globally in setup (e.g. `toBeInTheDocument`, `toBeDisabled`, `toBeEnabled`); components use `@testing-library/react` + `userEvent`.
+- Run a single file: `bun run test src/App.test.tsx`.
 
-**Assertion Library:**
-- Vitest's global `expect`, extended with `@testing-library/jest-dom/vitest` in `src/test/setup.ts`.
-- React Testing Library 16 and `@testing-library/user-event` drive component rendering and interaction.
+## Setup (`src/test/setup.ts`)
 
-**Run Commands:**
-```bash
-bun run test                         # Run all tests once (vitest run)
-bunx vitest                          # Watch mode; available from installed Vitest, no package script
-# No working coverage command is configured; no Vitest coverage provider is installed
-```
+Installs and stubs browser globals so jsdom behaves predictably:
 
-All required commands also run on pushes to `main` before deployment in `.github/workflows/deploy-pages.yml`. The Pages artifact is uploaded only after the test, typecheck, lint, and build steps succeed.
+- **In-memory `localStorage` mock** (`Object.defineProperty(globalThis, 'localStorage', ...)`) with a `Map`-backed store. Tests must **not** expect real `localStorage`.
+- `window.scrollTo` stubbed to a no-op.
+- `URL.createObjectURL` stubbed to return a fixed `'blob:photo'`.
 
-## Test File Organization
+## Test Files & What They Cover
 
-**Location:**
-- Tests are co-located beside source: `src/App.test.tsx`, `src/storage.test.ts`, `src/data/lessons.test.ts`, and `src/components/FoldingPlayer.test.tsx`.
-- Shared browser setup is isolated in `src/test/setup.ts`.
+| File | Coverage |
+| --- | --- |
+| `src/App.test.tsx` | App integration journey: only Dog unlocked at start; entering Dog and stepping to preview/player; restoring saved progress from storage and unlocking progressed animals; completing a lesson → adds to collection → unlocks next animal |
+| `src/storage.test.ts` | Persistence resilience (missing/corrupt JSON → `emptyProgress`); `saveProgress` writes correct key/values; `completeAnimal` completes an animal once (no duplicates) |
+| `src/data/lessons.test.ts` | Curriculum invariants: five lessons in progression order; declared per-lesson step ranges (`[6,6,7,8,9]`); every step has a defined `guide`; `isLessonUnlocked` unlocking rules |
+| `src/components/FoldingPlayer.test.tsx` | Step advancement (one fold at a time); progressive help (I need help → Show me more help → hint + target text); hint cleared when advancing |
+| `src/components/OrigamiCanvas.test.tsx` | Fold diagram renders crease/arrow; `detailedHelp` emphasizes crease + target dots; `slow` adds `is-slow` class; final step shows the finished animal instead of a diagram |
+| `src/components/AnimalArt.test.tsx` | Renders a labeled svg for each animal; accepts `className`; decorative stars appear only when `decorated` |
+| `src/components/Completion.test.tsx` | Replacing a photo revokes its object URL; unmounting revokes the final active URL |
 
-**Naming:**
-- Subject basename plus `.test.ts` for logic and `.test.tsx` for React components.
+## Patterns
 
-**Structure:**
-```
-src/<module>.test.ts[x]
-src/components/<Component>.test.tsx
-src/data/<module>.test.ts
-src/test/setup.ts
-```
+### Component tests (`App.test.tsx`, `FoldingPlayer.test.tsx`)
 
-## Test Structure
+- `render(<Component .../>)`, then query with `screen.getByRole('button', { name: ... })` / `getByText` / `getByRole('heading')`.
+- Uses `userEvent.setup()` + `await user.click(...)` for realistic interactions.
+- `beforeEach(() => localStorage.clear())` resets the storage mock between tests.
+- Asserts progression and unlocking through composed behaviors (enabled/disabled buttons, headings, step labels).
 
-**Suite Organization:**
-```typescript
-describe('progress storage', () => {
-  it('safely handles missing and malformed progress', () => {
-    expect(loadProgress({ getItem: () => null })).toEqual(emptyProgress)
-    expect(loadProgress({ getItem: () => '{bad json' })).toEqual(emptyProgress)
-  })
-})
-```
-This pattern is used in `src/storage.test.ts`: imports, one subject-oriented `describe`, behavior-named `it` cases, then arrange/act/assert statements inline.
+### Unit tests (`storage.test.ts`, `lessons.test.ts`)
 
-**Patterns:**
-- `src/App.test.tsx` clears shared `localStorage` in `beforeEach`; no test has explicit teardown.
-- Component tests call `userEvent.setup()`, `render(...)`, then await user clicks and assert through `screen`.
-- Queries favor accessible roles and names (`getByRole`) for controls/headings, with `getByText` for visible progress/help and `queryByText` for absence.
-- Logic tests use direct calls and structural assertions (`toEqual`, `toBe`, `toBeDefined`); component assertions use jest-dom matchers such as `toBeDisabled` and `toBeInTheDocument`.
+- Test pure helpers directly with explicit expectations; `loadProgress`/`saveProgress` use injected fake `Storage` (`{ getItem: ... }`, `{ setItem: ... }`) to avoid touching the global mock.
 
-## Mocking
+## Mocking Strategy
 
-**Framework:** Hand-written fakes; Vitest mock/spy APIs are not used.
-
-**Patterns:**
-```typescript
-const storage: Storage = {
-  get length() { return values.size },
-  clear: () => values.clear(),
-  getItem: (key) => values.get(key) ?? null,
-  key: (index) => [...values.keys()][index] ?? null,
-  removeItem: (key) => { values.delete(key) },
-  setItem: (key, value) => { values.set(key, value) },
-}
-Object.defineProperty(globalThis, 'localStorage', { value: storage, configurable: true })
-```
-`src/test/setup.ts` also stubs `window.scrollTo` and `URL.createObjectURL`. `src/storage.test.ts` injects minimal `getItem`/`setItem` objects directly into storage functions.
-
-**What to Mock:**
-- Browser APIs absent or inconvenient in jsdom (`scrollTo`, object URLs) and persistent local storage are replaced globally in `src/test/setup.ts`.
-- Narrow infrastructure dependencies are passed directly to `loadProgress` and `saveProgress` in `src/storage.test.ts`.
-
-**What NOT to Mock:**
-- React child components, lesson data, and storage integration are real in `src/App.test.tsx`; its journey tests exercise the assembled app through the DOM rather than mocking module boundaries.
-
-## Fixtures and Factories
-
-**Test Data:**
-```typescript
-localStorage.setItem(
-  STORAGE_KEY,
-  JSON.stringify({ completed: ['dog'], current: { cat: 2 } }),
-)
-```
-`src/App.test.tsx` seeds small progress objects inline. `src/components/FoldingPlayer.test.tsx` uses the production `lessons[0]`; `src/storage.test.ts` defines its progress value inline.
-
-**Location:**
-- No fixture/factory directory exists. Data is inline or imported from `src/data/lessons.ts`.
+- Prefer real rendering + the injected-`Storage` seam over mocking modules. The `storage.ts` API already accepts fake storage, so `storage.test.ts` needs no spies.
+- Browser APIs (scrollTo, object URLs, localStorage) are stub-installed in setup rather than per-test.
+- `userEvent` provides interaction; no manual `fireEvent`/DOM event mocking except through the file-input `onChange` in `Completion` (asserted via the file-input label/behavior in App journey).
 
 ## Coverage
 
-**Requirements:** None enforced. `vite.config.ts` has no coverage settings or thresholds, `package.json` has no coverage script/provider, and `.gitignore` merely ignores a possible `coverage` directory.
+- No `coverage` threshold configured (`coverage` dir is `.gitignore`'d, so coverage output isn't enforced in CI).
+- Tests run in CI **before** typecheck/lint in `deploy-pages.yml`; a red test blocks the build and deploy.
 
-**View Coverage:**
+## Commands
+
 ```bash
-# Unavailable as configured. Add @vitest/coverage-v8 or @vitest/coverage-istanbul first,
-# then run: bunx vitest run --coverage
+bun run test                    # full suite (single run)
+bun run test src/App.test.tsx   # single test file
+bun run typecheck               # strict TS check
+bun run lint                    # ESLint
+bun run build                   # typecheck + vite build
 ```
-- Existing tests cover 8 behaviors across 4 files: the main Dog journey/progress restoration (`src/App.test.tsx`), progressive help and advancing (`src/components/FoldingPlayer.test.tsx`), lesson ordering/unlocks (`src/data/lessons.test.ts`), and basic storage parsing/save/idempotent completion (`src/storage.test.ts`).
-- Not directly covered: `src/components/AnimalArt.tsx`, `src/components/OrigamiCanvas.tsx`, `src/main.tsx`, collection empty/populated interactions, completion decoration/photo controls, replay/previous/exit callbacks, last-step completion callback in `FoldingPlayer`, non-array/non-object parsed storage fields, storage write failures, and service-worker registration.
 
-## Test Types
+## Known Gaps / Opportunities
 
-**Unit Tests:**
-- `src/data/lessons.test.ts` validates data shape/progression rules; `src/storage.test.ts` validates pure/persistence helpers with injected fakes.
-- `src/components/FoldingPlayer.test.tsx` is a focused component test using real lesson data and DOM interaction.
-
-**Integration Tests:**
-- `src/App.test.tsx` renders the full app with real child components and in-memory local storage. It covers initial locking, lesson entry, saved progression restoration, completing all six Dog steps, collection reward copy, and unlocking Cat.
-
-**E2E Tests:**
-- Not used. No Playwright/Cypress dependency, config, or browser-level test directory exists.
-
-## Common Patterns
-
-**Async Testing:**
-```typescript
-const user = userEvent.setup()
-render(<App />)
-await user.click(screen.getByRole('button', { name: 'Dog' }))
-expect(screen.getByRole('heading', { name: 'Dog' })).toBeInTheDocument()
-```
-User interactions are awaited; assertions are immediate because updates complete within `user.click` (`src/App.test.tsx`). No `waitFor`, fake timers, or async network tests are present.
-
-**Error Testing:**
-```typescript
-expect(loadProgress({ getItem: () => null })).toEqual(emptyProgress)
-expect(loadProgress({ getItem: () => '{bad json' })).toEqual(emptyProgress)
-```
-The only explicit error-path test verifies graceful fallback for absent and malformed serialized progress in `src/storage.test.ts`; no rejection or thrown-error assertions are present.
-
----
-
-*Testing analysis: 2026-08-29*
+- `OrigamiCanvas` and `AnimalArt` now have direct unit tests.
+- `Collection` is covered indirectly through the App journey; decoration interactions still lack direct coverage.
+- No snapshot or visual-regression tests; geometry bug risk lives in hand-authored guide coordinates in `lessons.ts`.
