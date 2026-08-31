@@ -1,4 +1,12 @@
 import '@testing-library/jest-dom/vitest'
+import { vi } from 'vitest'
+
+// Unit tests exercise DOM behavior; Vite's production build verifies StyleX extraction.
+vi.mock('@stylexjs/stylex', () => ({
+  create: <Styles,>(styles: Styles) => styles,
+  defineVars: <Vars,>(vars: Vars) => vars,
+  props: () => ({}),
+}))
 
 Object.defineProperty(window, 'scrollTo', { value: () => undefined, writable: true })
 Object.defineProperty(URL, 'createObjectURL', { value: () => 'blob:photo', writable: true })

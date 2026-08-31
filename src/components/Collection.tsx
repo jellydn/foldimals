@@ -1,10 +1,11 @@
 import { getLesson } from '../data/lessons'
+import { Eyebrow } from '../design-system/Eyebrow'
 import type { AnimalId, SavedProgress } from '../types'
 import { AnimalArt } from './AnimalArt'
 
 export function Collection({ progress, onChoose }: { progress: SavedProgress; onChoose: (id: AnimalId) => void }) {
   return <main className="collection-page">
-    <span className="eyebrow">YOUR PAPER FRIENDS</span>
+    <Eyebrow>YOUR PAPER FRIENDS</Eyebrow>
     <h1>My Animals</h1>
     <p>Every friend here started as one little square.</p>
     {progress.completed.length === 0 ? <div className="empty-collection"><span>◇</span><h2>Your shelf is ready!</h2><p>Fold your first animal and it will live here.</p></div> :

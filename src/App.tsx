@@ -1,3 +1,4 @@
+import * as stylex from '@stylexjs/stylex'
 import { useCallback, useEffect, useState } from 'react'
 import { AppHeader } from './components/AppHeader'
 import { Collection } from './components/Collection'
@@ -6,6 +7,7 @@ import { FoldingPlayer } from './components/FoldingPlayer'
 import { Home } from './components/Home'
 import { Preview } from './components/Preview'
 import { getLesson, lessons } from './data/lessons'
+import { colors } from './design-system/tokens.stylex'
 import { clampStepIndices, completeAnimal, loadProgress, saveProgress } from './storage'
 import type { AnimalId } from './types'
 
@@ -35,7 +37,7 @@ export default function App() {
 
   if (screen === 'player') return <FoldingPlayer lesson={lesson} initialStep={progress.current[selectedId] ?? 0} onStepChange={updateStep} onExit={() => setScreen('preview')} onComplete={finish} />
 
-  return <div className="app-shell">
+  return <div {...stylex.props(styles.shell)}>
     <AppHeader onHome={home} onCollection={() => setScreen('collection')} completedCount={progress.completed.length} />
     {screen === 'home' && <Home progress={progress} onChoose={choose} />}
     {screen === 'preview' && <Preview lesson={lesson} savedStep={progress.current[selectedId] ?? 0} onBack={home} onStart={() => setScreen('player')} />}
@@ -43,3 +45,11 @@ export default function App() {
     {screen === 'collection' && <Collection progress={progress} onChoose={choose} />}
   </div>
 }
+
+const styles = stylex.create({
+  shell: {
+    backgroundColor: colors.canvas,
+    backgroundImage: `radial-gradient(circle at 15% 8%, ${colors.canvasGlow} 0 3%, transparent 22%)`,
+    minHeight: '100vh',
+  },
+})

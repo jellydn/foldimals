@@ -1,4 +1,7 @@
+import * as stylex from '@stylexjs/stylex'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { Button } from '../design-system/Button'
+import { Eyebrow } from '../design-system/Eyebrow'
 import type { AnimalLesson } from '../types'
 import { AnimalArt } from './AnimalArt'
 
@@ -22,7 +25,7 @@ export function Completion({ lesson, onAnother, onCollection }: { lesson: Animal
 
   return <main className="completion-page">
     <div className="confetti" aria-hidden="true">✦ · ★ · ✦</div>
-    <span className="eyebrow">YOU MADE IT!</span>
+    <Eyebrow>YOU MADE IT!</Eyebrow>
     <h1>Meet your new <em>{lesson.name}!</em></h1>
     <p>You turned one square into a brand-new friend.</p>
     <div className="finished-art" style={{ background: `${lesson.color}16` }}>
@@ -35,8 +38,22 @@ export function Completion({ lesson, onAnother, onCollection }: { lesson: Animal
     </div>
     <div className="reward-note"><span>💛</span><p><strong>{lesson.name} joined My Animals!</strong><br />A new folding friend is waiting for you.</p></div>
     <div className="completion-actions">
-      <button className="secondary-button" onClick={onCollection}>See My Animals</button>
-      <button className="primary-button" style={{ background: lesson.color }} onClick={onAnother}>Choose another →</button>
+      <Button xstyle={styles.action} onClick={onCollection}>See My Animals</Button>
+      <Button accentColor={lesson.strongColor} variant="primary" xstyle={styles.action} onClick={onAnother}>Choose another →</Button>
     </div>
   </main>
 }
+
+const styles = stylex.create({
+  action: {
+    justifyContent: 'center',
+    minHeight: {
+      default: 58,
+      '@media (min-width: 601px) and (max-height: 850px)': 52,
+    },
+    width: {
+      default: 'auto',
+      '@media (max-width: 600px)': '100%',
+    },
+  },
+})

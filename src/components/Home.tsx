@@ -1,4 +1,5 @@
 import { isLessonUnlocked, lessons } from '../data/lessons'
+import { Eyebrow } from '../design-system/Eyebrow'
 import type { AnimalId, SavedProgress } from '../types'
 import { AnimalArt } from './AnimalArt'
 import { AnimalCard } from './AnimalCard'
@@ -7,7 +8,7 @@ export function Home({ progress, onChoose }: { progress: SavedProgress; onChoose
   return <main className="home-page">
     <section className="hero">
       <div>
-        <span className="eyebrow">PAPER + IMAGINATION</span>
+        <Eyebrow>PAPER + IMAGINATION</Eyebrow>
         <h1>Who will you<br /><em>fold today?</em></h1>
         <p>Pick a friend. We’ll make it together,<br />one easy fold at a time.</p>
       </div>
@@ -19,7 +20,7 @@ export function Home({ progress, onChoose }: { progress: SavedProgress; onChoose
     </section>
     <section className="lesson-section" aria-labelledby="lesson-heading">
       <div className="section-heading">
-        <div><span className="eyebrow">YOUR FOLDING PATH</span><h2 id="lesson-heading">Choose an animal</h2></div>
+        <div><Eyebrow>YOUR FOLDING PATH</Eyebrow><h2 id="lesson-heading">Choose an animal</h2></div>
         <p>Start with Dog, then unlock new friends!</p>
       </div>
       <div className="animal-grid">

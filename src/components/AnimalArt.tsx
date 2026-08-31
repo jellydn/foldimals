@@ -1,3 +1,5 @@
+import * as stylex from '@stylexjs/stylex'
+import type { StyleXStyles } from '@stylexjs/stylex'
 import type { AnimalId } from '../types'
 
 interface AnimalArtProps {
@@ -5,13 +7,15 @@ interface AnimalArtProps {
   color: string
   className?: string
   decorated?: boolean
+  xstyle?: StyleXStyles<{ height?: number | string; width?: number | string }>
 }
 
-export function AnimalArt({ animal, color, className = '', decorated = false }: AnimalArtProps) {
+export function AnimalArt({ animal, color, className = '', decorated = false, xstyle }: AnimalArtProps) {
   const shared = { fill: color, stroke: '#27324a', strokeWidth: 5, strokeLinejoin: 'round' as const }
+  const styleProps = stylex.props(xstyle)
 
   return (
-    <svg className={className} viewBox="0 0 200 180" role="img" aria-label={`${animal} origami`}>
+    <svg {...styleProps} className={[className, styleProps.className].filter(Boolean).join(' ')} viewBox="0 0 200 180" role="img" aria-label={`${animal} origami`}>
       {animal === 'dog' && <>
         <path d="M32 35L70 53L100 35L130 53L168 35L153 145L100 168L47 145Z" {...shared} />
         <path d="M32 35L70 53L50 105Z" fill="#e79b48" stroke="#27324a" strokeWidth="5" />

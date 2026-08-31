@@ -30,6 +30,8 @@ jobs:
         run: bun run typecheck
       - name: Lint
         run: bun run lint
+      - name: Validate design system
+        run: bun run design:lint
       - name: Build
         run: bun run build
       - name: Upload Pages artifact

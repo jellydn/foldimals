@@ -1,9 +1,21 @@
+import stylex from '@stylexjs/unplugin'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
-  plugins: [react()],
+  plugins: [
+    stylex.vite({
+      dev: mode === 'development',
+      devMode: mode === 'development' ? 'css-only' : 'off',
+      unstable_moduleResolution: {
+        type: 'commonJS',
+        rootDir: process.cwd(),
+      },
+      useCSSLayers: true,
+    }),
+    react(),
+  ],
   server: {
     allowedHosts: ['.onamp.dev'],
   },
@@ -12,4 +24,4 @@ export default defineConfig({
     setupFiles: './src/test/setup.ts',
     globals: true,
   },
-})
+}))
