@@ -1,4 +1,7 @@
+import * as stylex from '@stylexjs/stylex'
 import { useEffect, useState } from 'react'
+import { Button } from '../design-system/Button'
+import { ProgressBar } from '../design-system/ProgressBar'
 import type { AnimalLesson } from '../types'
 import { OrigamiCanvas } from './OrigamiCanvas'
 
@@ -37,12 +40,12 @@ export function FoldingPlayer({ lesson, initialStep, onStepChange, onExit, onCom
 
   return <main className="player-page">
     <header className="player-header">
-      <button className="icon-button" onClick={onExit} aria-label="Leave lesson">✕</button>
-      <div className="player-progress" aria-label={`Step ${stepIndex + 1} of ${lesson.steps.length}`}>
+      <Button variant="icon" onClick={onExit} aria-label="Leave lesson">✕</Button>
+      <div className="player-progress">
         <span>Step {stepIndex + 1} of {lesson.steps.length}</span>
-        <div className="progress-track"><div style={{ width: `${((stepIndex + 1) / lesson.steps.length) * 100}%`, background: lesson.color }} /></div>
+        <ProgressBar color={lesson.color} label={`Step ${stepIndex + 1} of ${lesson.steps.length}`} value={((stepIndex + 1) / lesson.steps.length) * 100} />
       </div>
-      <button className="icon-button replay-button" onClick={replay} aria-label="Replay animation">↻</button>
+      <Button variant="icon" xstyle={styles.replayButton} onClick={replay} aria-label="Replay animation">↻</Button>
     </header>
 
     <section className="player-layout">
@@ -59,10 +62,32 @@ export function FoldingPlayer({ lesson, initialStep, onStepChange, onExit, onCom
     </section>
 
     <footer className="player-controls">
-      <button className="secondary-button" disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>← Previous</button>
-      <button className="primary-button" style={{ background: lesson.color }} onClick={next}>
+      <Button xstyle={styles.controlButton} disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>← Previous</Button>
+      <Button accentColor={lesson.color} variant="primary" xstyle={styles.nextButton} onClick={next}>
         {stepIndex === lesson.steps.length - 1 ? 'I did it! 🎉' : 'Next fold →'}
-      </button>
+      </Button>
     </footer>
   </main>
 }
+
+const styles = stylex.create({
+  controlButton: {
+    minWidth: {
+      default: 'auto',
+      '@media (max-width: 600px)': 0,
+    },
+  },
+  nextButton: {
+    flexGrow: {
+      default: 0,
+      '@media (max-width: 600px)': 1,
+    },
+    minWidth: {
+      default: 190,
+      '@media (max-width: 600px)': 0,
+    },
+  },
+  replayButton: {
+    fontSize: 29,
+  },
+})

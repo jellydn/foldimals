@@ -25,6 +25,8 @@ Browser localStorage ◀──────── App screen flow ─────
 
 Lesson content and fold-guide coordinates live in [`src/data/lessons.ts`](src/data/lessons.ts). The player remains lesson-agnostic through the `AnimalLesson` and `FoldStep` contracts in [`src/types.ts`](src/types.ts).
 
+Reusable interface styles use StyleX: semantic tokens live in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts), and shared controls live beside them in [`src/design-system`](src/design-system). Global CSS is reserved for document defaults, page-level legacy layout, and the selector-heavy SVG fold animations. See the [design system guide](docs/design-system.md) for component contracts and migration rules.
+
 For deeper context:
 
 - [Architecture map](.planning/codebase/ARCHITECTURE.md)
