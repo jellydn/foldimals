@@ -4,8 +4,7 @@ name: Foldimals
 description: Implemented visual identity and StyleX design system for the Foldimals origami learning PWA.
 colors:
   primary: "#ff785f"
-  primary-strong: "#e45b49"
-  primary-action: "#935554"
+  primary-strong: "#935554"
   canvas: "#fffaf0"
   canvas-glow: "#fff3d7"
   surface: "#ffffff"
@@ -71,7 +70,7 @@ spacing:
   xlarge: 40px
 components:
   button-primary:
-    backgroundColor: "{colors.primary-action}"
+    backgroundColor: "{colors.primary-strong}"
     textColor: "{colors.surface}"
     typography: "{typography.button}"
     rounded: "{rounded.medium}"
@@ -119,10 +118,10 @@ The visual language resembles paper craft rather than a generic productivity app
 
 The machine-readable palette maps to the implementation as follows:
 
-- `primary`, `primary-strong`, `primary-action`, `canvas`, `canvas-glow`, `surface`, `ink`, text, line, focus, and disabled colors correspond to the semantic StyleX variables in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts). `primary` is named `colors.coral` in TypeScript.
+- `primary`, `primary-strong`, `canvas`, `canvas-glow`, `surface`, `ink`, text, line, focus, and disabled colors correspond to the semantic StyleX variables in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts). `primary` is named `colors.coral` in TypeScript.
 - Cream `canvas` is the page foundation. `canvas-glow` appears in the shell's subtle radial wash; white `surface` holds cards and controls.
 - Navy `ink` supplies the main text, outlines, and hard-edged shadows. `muted-text` supports descriptions and metadata.
-- Coral `primary` marks the logo and bright decorative accents; `primary-strong` marks default eyebrow labels; contrast-safe `primary-action` fills shared primary controls. Blue `focus` is reserved for visible keyboard focus.
+- Coral `primary` marks the logo and bright decorative accents; contrast-safe `primary-strong` marks default eyebrow labels and fills shared primary controls. Blue `focus` is reserved for visible keyboard focus.
 - Each lesson owns a bright runtime accent (`lesson-dog` through `lesson-bird`) and a paired strong accent in [`src/data/lessons.ts`](src/data/lessons.ts). Bright accents tint art wells and progress; strong accents color small labels and lesson-specific primary controls against white text. Separate lighter `paperColor` values color the SVG animals themselves and are content data, not shared StyleX tokens.
 - The PWA manifest currently uses near-match chrome values `#fff9ed` and `#ff785a`. They are limited to install/browser chrome and must not be copied into component styling as replacements for `canvas` or `primary`.
 

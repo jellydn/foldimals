@@ -112,7 +112,7 @@ const styles = stylex.create({
     },
   },
   primary: {
-    backgroundColor: colors.coralAction,
+    backgroundColor: colors.coralStrong,
     color: colors.surface,
     textShadow: '0 1px 0 rgba(0, 0, 0, 0.15)',
   },
