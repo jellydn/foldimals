@@ -60,6 +60,7 @@ export interface AnimalLesson {
   difficulty: 'Easy' | 'Medium'
   minutes: number
   color: string
+  strongColor: string
   paperColor: string
   steps: FoldStep[]
 }

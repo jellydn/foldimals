@@ -151,7 +151,7 @@ const styles = stylex.create({
     filter: 'grayscale(0.6)',
   },
   meta: {
-    color: colors.quietText,
+    color: colors.mutedText,
     display: 'flex',
     fontSize: 13,
     fontWeight: 800,

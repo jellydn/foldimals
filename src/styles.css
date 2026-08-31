@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap');
 
+@layer base, priority1, priority2, priority3, priority4;
+
+@layer base {
 :root {
   font-family: 'Nunito', system-ui, sans-serif;
   color: #27324a;
@@ -44,7 +47,7 @@ h1 em { color: var(--coral); font-style: normal; }
 .preview-art { position: relative; display: grid; place-items: center; min-height: 550px; }.preview-art svg { width: 76%; max-width: 410px; filter: drop-shadow(0 18px 10px rgba(30,40,50,.13)); }.preview-sticker { position: absolute; left: 9%; bottom: 10%; padding: 9px 16px; border: 2px solid var(--ink); border-radius: 99px; background: #fff7c9; font-family: 'Fredoka'; font-weight: 700; transform: rotate(-5deg); }
 .preview-copy { padding: clamp(36px, 6vw, 72px); display: flex; flex-direction: column; justify-content: center; }.preview-copy h1 { margin-bottom: 0; font-size: clamp(52px, 7vw, 72px); }.preview-copy .tagline { color: #69778b; font-size: 20px; font-weight: 700; }
 .lesson-facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 25px; }.lesson-facts span { padding: 8px 12px; border-radius: 10px; background: #f6f2eb; font-size: 13px; }
-.ready-box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; padding: 17px; border: 2px solid #ded7ca; border-radius: 18px; }.paper-icon { width: 54px; height: 54px; display: grid; place-items: center; color: var(--coral); border-radius: 14px; background: #fff0d4; font-size: 38px; }.ready-box h2 { margin-bottom: 2px; font-size: 17px; }.ready-box p { margin: 0; color: #748095; font-size: 14px; }.ready-check { color: #55a55b; font-size: 24px; font-weight: 900; }
+.ready-box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; padding: 17px; border: 2px solid #ded7ca; border-radius: 18px; }.paper-icon { width: 54px; height: 54px; display: grid; place-items: center; color: var(--coral); border-radius: 14px; background: #fff0d4; font-size: 38px; }.ready-box h2 { margin-bottom: 2px; font-size: 17px; }.ready-box p { margin: 0; color: #68758a; font-size: 14px; }.ready-check { color: #55a55b; font-size: 24px; font-weight: 900; }
 .calm-note { display: flex; gap: 10px; margin: 18px 3px; color: #69768a; font-size: 14px; }.calm-note p { margin: 0; }
 
 .player-page { min-height: 100vh; display: grid; grid-template-rows: 86px 1fr 94px; background: #fffaf0; }
@@ -76,10 +79,11 @@ h1 em { color: var(--coral); font-style: normal; }
   .lesson-section { padding-top: 8px; }.section-heading { margin-bottom: 16px; }.section-heading h2 { font-size: 31px; }
   .section-heading { align-items: start; flex-direction: column; }.section-heading p { font-size: 14px; }.animal-grid { display: flex; flex-direction: column; }
   .preview-copy { padding: 30px 22px; }.preview-copy h1 { font-size: 48px; }.lesson-facts { gap: 6px; }.lesson-facts span { font-size: 11px; }.ready-box { grid-template-columns: auto 1fr; }.ready-check { display: none; }
-  .player-page { display: block; padding-bottom: 102px; }.player-header { position: sticky; z-index: 5; top: 0; grid-template-columns: 47px 1fr 47px; gap: 10px; height: 74px; padding: 8px 12px; background: #fffaf0; }.player-layout { display: flex; flex-direction: column; gap: 18px; padding: 15px 0 25px; }.paper-stage { width: 100%; min-height: 360px; border-radius: 28px; }.fold-diagram { width: 350px; max-width: 95%; }.instruction-panel { width: 100%; text-align: center; }.instruction-panel h1 { margin-bottom: 14px; font-size: 29px; }.action-chip { margin-bottom: 10px; }.help-button { margin: 12px auto 0; }.hint-box { text-align: left; }.player-controls { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; height: 90px; gap: 10px; padding: 12px; }.player-controls button { min-width: 0!important; padding: 8px 14px; font-size: 14px; }
+  .player-page { display: block; padding-bottom: 102px; }.player-header { position: sticky; z-index: 5; top: 0; grid-template-columns: 47px 1fr 47px; gap: 10px; height: 74px; padding: 8px 12px; background: #fffaf0; }.player-layout { display: flex; flex-direction: column; gap: 18px; padding: 15px 0 25px; }.paper-stage { width: 100%; min-height: 360px; border-radius: 28px; }.fold-diagram { width: 350px; max-width: 95%; }.instruction-panel { width: 100%; text-align: center; }.instruction-panel h1 { margin-bottom: 14px; font-size: 29px; }.action-chip { margin-bottom: 10px; }.help-button { margin: 12px auto 0; }.hint-box { text-align: left; }.player-controls { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; height: 90px; gap: 10px; padding: 12px; }.player-controls button { min-width: 0!important; padding: 8px 14px!important; font-size: 14px!important; }
   .completion-page { padding-top: 25px; }.finished-art { height: 250px; }.decorate-row, .completion-actions { flex-direction: column; }.decorate-row > *, .completion-actions > * { justify-content: center; width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto!important; animation-duration: .01ms!important; animation-iteration-count: 1!important; transition-duration: .01ms!important; }
+}
 }

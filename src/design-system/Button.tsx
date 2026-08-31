@@ -64,7 +64,6 @@ const styles = stylex.create({
       default: shadows.control,
       ':active': shadows.controlActive,
     },
-    color: colors.ink,
     cursor: {
       default: 'pointer',
       ':disabled': 'not-allowed',
@@ -98,6 +97,7 @@ const styles = stylex.create({
   },
   icon: {
     borderRadius: '50%',
+    color: colors.ink,
     fontSize: 21,
     height: {
       default: 52,
@@ -112,7 +112,7 @@ const styles = stylex.create({
     },
   },
   primary: {
-    backgroundColor: colors.coral,
+    backgroundColor: colors.coralAction,
     color: colors.surface,
     textShadow: '0 1px 0 rgba(0, 0, 0, 0.15)',
   },
@@ -120,12 +120,14 @@ const styles = stylex.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     boxShadow: 'none',
+    color: colors.ink,
     minHeight: 44,
     paddingBlock: 0,
     paddingInline: 0,
   },
   secondary: {
     backgroundColor: colors.surface,
+    color: colors.ink,
   },
 })
 

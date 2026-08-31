@@ -39,7 +39,7 @@ export function Completion({ lesson, onAnother, onCollection }: { lesson: Animal
     <div className="reward-note"><span>💛</span><p><strong>{lesson.name} joined My Animals!</strong><br />A new folding friend is waiting for you.</p></div>
     <div className="completion-actions">
       <Button xstyle={styles.action} onClick={onCollection}>See My Animals</Button>
-      <Button accentColor={lesson.color} variant="primary" xstyle={styles.action} onClick={onAnother}>Choose another →</Button>
+      <Button accentColor={lesson.strongColor} variant="primary" xstyle={styles.action} onClick={onAnother}>Choose another →</Button>
     </div>
   </main>
 }

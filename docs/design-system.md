@@ -6,7 +6,7 @@ The repository-root [`DESIGN.md`](../DESIGN.md) follows Google Labs' DESIGN.md f
 
 ## Foundations
 
-[`src/design-system/tokens.stylex.ts`](../src/design-system/tokens.stylex.ts) is the source of truth for semantic colors, font families, radii, spacing, and control shadows. Components consume semantic names such as `colors.canvas` and `colors.ink` rather than copying values. Lesson colors remain runtime data and are passed through the narrow `accentColor` or `color` props on primitives.
+[`src/design-system/tokens.stylex.ts`](../src/design-system/tokens.stylex.ts) is the source of truth for semantic colors, font families, radii, spacing, and control shadows. Components consume semantic names such as `colors.canvas` and `colors.ink` rather than copying values. Lesson colors remain runtime data: bright `color` values own tints and progress, while contrast-safe `strongColor` values own small labels and primary actions through narrow primitive props.
 
 The initial primitives are:
 
@@ -22,7 +22,7 @@ The initial primitives are:
 2. Use `stylex.create()` and `stylex.props()` for React component styles. Compose variants rather than spreading raw style objects.
 3. Use dynamic StyleX functions only for values that come from lesson data or live progress.
 4. Keep component style escape hatches narrow. Add a supported property only when a caller has a real layout need.
-5. Keep `src/styles.css` for document defaults, page-level CSS that has not yet migrated, and SVG selectors/keyframes. Remove old rules as their owning component moves to StyleX.
+5. Keep `src/styles.css` for document defaults, page-level CSS that has not yet migrated, and SVG selectors/keyframes. Keep it in the lower-priority `base` layer so resets cannot override StyleX primitives, and remove old rules as their owning component moves to StyleX.
 6. Preserve minimum touch targets, visible keyboard focus, `prefers-reduced-motion`, and the existing phone/tablet breakpoints when migrating.
 
 The StyleX Vite plugin must stay before the React plugin in [`vite.config.ts`](../vite.config.ts). ESLint validates static StyleX syntax, token-file naming, shorthands, and unused style definitions. Unit tests mock compile-time StyleX functions because they verify DOM behavior; `bun run build` verifies extraction and generated CSS.

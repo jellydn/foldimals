@@ -51,7 +51,7 @@ export function FoldingPlayer({ lesson, initialStep, onStepChange, onExit, onCom
     <section className="player-layout">
       <OrigamiCanvas lesson={lesson} step={step} animationKey={animationKey} slow={helpLevel > 0} detailedHelp={helpLevel > 1} />
       <div className="instruction-panel" aria-live="polite">
-        <span className="action-chip" style={{ background: `${lesson.color}22`, color: lesson.color }}>ONE FOLD</span>
+        <span className="action-chip" style={{ background: `${lesson.color}22`, color: lesson.strongColor }}>ONE FOLD</span>
         <h1>{step.instruction}</h1>
         {helpLevel > 1 && <div className="hint-box"><span aria-hidden="true">💡</span><p><strong>Try this:</strong> {step.hint}</p></div>}
         <button className={`help-button ${helpLevel ? 'active' : ''}`} onClick={askForHelp}>
@@ -63,7 +63,7 @@ export function FoldingPlayer({ lesson, initialStep, onStepChange, onExit, onCom
 
     <footer className="player-controls">
       <Button xstyle={styles.controlButton} disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>← Previous</Button>
-      <Button accentColor={lesson.color} variant="primary" xstyle={styles.nextButton} onClick={next}>
+      <Button accentColor={lesson.strongColor} variant="primary" xstyle={styles.nextButton} onClick={next}>
         {stepIndex === lesson.steps.length - 1 ? 'I did it! 🎉' : 'Next fold →'}
       </Button>
     </footer>

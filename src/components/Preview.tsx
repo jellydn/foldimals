@@ -13,7 +13,7 @@ export function Preview({ lesson, savedStep, onBack, onStart }: { lesson: Animal
         <span className="preview-sticker">You’ll make this!</span>
       </div>
       <div className="preview-copy">
-        <Eyebrow color={lesson.color}>READY TO FOLD?</Eyebrow>
+        <Eyebrow color={lesson.strongColor}>READY TO FOLD?</Eyebrow>
         <h1>{lesson.name}</h1>
         <p className="tagline">{lesson.tagline}</p>
         <div className="lesson-facts">
@@ -27,7 +27,7 @@ export function Preview({ lesson, savedStep, onBack, onStart }: { lesson: Animal
           <span className="ready-check" aria-hidden="true">✓</span>
         </div>
         <div className="calm-note"><span aria-hidden="true">💛</span><p><strong>No rush.</strong> You can replay every fold or ask for extra help.</p></div>
-        <Button accentColor={lesson.color} fullWidth variant="primary" onClick={onStart}>
+        <Button accentColor={lesson.strongColor} fullWidth variant="primary" onClick={onStart}>
           {savedStep > 0 ? `Keep folding — step ${savedStep + 1} →` : 'My paper is ready →'}
         </Button>
       </div>

@@ -4,6 +4,7 @@ export const colors = stylex.defineVars({
   canvas: '#fffaf0',
   canvasGlow: '#fff3d7',
   coral: '#ff785f',
+  coralAction: '#935554',
   coralStrong: '#e45b49',
   disabledBorder: '#c9c4bc',
   disabledSurface: '#eee8df',
@@ -11,7 +12,6 @@ export const colors = stylex.defineVars({
   ink: '#27324a',
   line: '#e9dfd0',
   mutedText: '#68758a',
-  quietText: '#8993a3',
   surface: '#ffffff',
 })
 

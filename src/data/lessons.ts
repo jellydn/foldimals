@@ -19,6 +19,7 @@ export const lessons: AnimalLesson[] = [
     difficulty: 'Easy',
     minutes: 5,
     color: '#ff876d',
+    strongColor: '#935c5c',
     paperColor: '#ffc86b',
     steps: [
       { id: 'dog-1', instruction: 'Turn your square like a diamond.', hint: 'Point one corner toward your tummy.', diagram: 'diamond', guide: guide([55, 55, 245, 245], [95, 82, 205, 205], [point(55, 55), point(245, 245)]) },
@@ -36,6 +37,7 @@ export const lessons: AnimalLesson[] = [
     difficulty: 'Easy',
     minutes: 5,
     color: '#8f7ee7',
+    strongColor: '#5b5898',
     paperColor: '#b8a7ff',
     steps: [
       { id: 'cat-1', instruction: 'Turn your square like a diamond.', hint: 'One point should face you.', diagram: 'diamond', guide: guide([55, 55, 245, 245], [92, 80, 204, 205], [point(55, 55), point(245, 245)]) },
@@ -53,6 +55,7 @@ export const lessons: AnimalLesson[] = [
     difficulty: 'Easy',
     minutes: 7,
     color: '#4ea99b',
+    strongColor: '#3a6e72',
     paperColor: '#80d3c2',
     steps: [
       { id: 'mouse-1', instruction: 'Turn the square like a diamond.', hint: 'Put a point at the top and bottom.', diagram: 'diamond', guide: guide([55, 55, 245, 245], [90, 84, 207, 207]) },
@@ -71,6 +74,7 @@ export const lessons: AnimalLesson[] = [
     difficulty: 'Medium',
     minutes: 8,
     color: '#72a83d',
+    strongColor: '#4c6d44',
     paperColor: '#a8d85e',
     steps: [
       { id: 'frog-1', instruction: 'Fold the square in half sideways.', hint: 'Bring the left edge onto the right edge.', diagram: 'rectangle', guide: guide([150, 55, 150, 245], [65, 150, 230, 150]) },
@@ -90,6 +94,7 @@ export const lessons: AnimalLesson[] = [
     difficulty: 'Medium',
     minutes: 10,
     color: '#3988d3',
+    strongColor: '#305d8e',
     paperColor: '#79b9ed',
     steps: [
       { id: 'bird-1', instruction: 'Turn the square like a diamond.', hint: 'One point faces the sky.', diagram: 'diamond', guide: guide([55, 55, 245, 245], [90, 82, 205, 205]) },

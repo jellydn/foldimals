@@ -5,21 +5,26 @@ description: Implemented visual identity and StyleX design system for the Foldim
 colors:
   primary: "#ff785f"
   primary-strong: "#e45b49"
+  primary-action: "#935554"
   canvas: "#fffaf0"
   canvas-glow: "#fff3d7"
   surface: "#ffffff"
   ink: "#27324a"
   muted-text: "#68758a"
-  quiet-text: "#8993a3"
   line: "#e9dfd0"
   focus: "#2e8ccf"
   disabled-border: "#c9c4bc"
   disabled-surface: "#eee8df"
   lesson-dog: "#ff876d"
+  lesson-dog-strong: "#935c5c"
   lesson-cat: "#8f7ee7"
+  lesson-cat-strong: "#5b5898"
   lesson-mouse: "#4ea99b"
+  lesson-mouse-strong: "#3a6e72"
   lesson-frog: "#72a83d"
+  lesson-frog-strong: "#4c6d44"
   lesson-bird: "#3988d3"
+  lesson-bird-strong: "#305d8e"
 typography:
   display-hero:
     fontFamily: Fredoka
@@ -66,7 +71,7 @@ spacing:
   xlarge: 40px
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
+    backgroundColor: "{colors.primary-action}"
     textColor: "{colors.surface}"
     typography: "{typography.button}"
     rounded: "{rounded.medium}"
@@ -114,11 +119,11 @@ The visual language resembles paper craft rather than a generic productivity app
 
 The machine-readable palette maps to the implementation as follows:
 
-- `primary`, `primary-strong`, `canvas`, `canvas-glow`, `surface`, `ink`, text, line, focus, and disabled colors correspond to the semantic StyleX variables in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts). `primary` is named `colors.coral` in TypeScript.
+- `primary`, `primary-strong`, `primary-action`, `canvas`, `canvas-glow`, `surface`, `ink`, text, line, focus, and disabled colors correspond to the semantic StyleX variables in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts). `primary` is named `colors.coral` in TypeScript.
 - Cream `canvas` is the page foundation. `canvas-glow` appears in the shell's subtle radial wash; white `surface` holds cards and controls.
-- Navy `ink` supplies the main text, outlines, and hard-edged shadows. `muted-text` and `quiet-text` support descriptions and metadata.
-- Coral `primary` marks shared primary actions and the logo; `primary-strong` marks default eyebrow labels. Blue `focus` is reserved for visible keyboard focus.
-- Each lesson owns a runtime accent (`lesson-dog` through `lesson-bird`) in [`src/data/lessons.ts`](src/data/lessons.ts). That accent tints art wells, progress, labels, and lesson-specific primary actions. Separate lighter `paperColor` values color the SVG animals themselves and are content data, not shared StyleX tokens.
+- Navy `ink` supplies the main text, outlines, and hard-edged shadows. `muted-text` supports descriptions and metadata.
+- Coral `primary` marks the logo and bright decorative accents; `primary-strong` marks default eyebrow labels; contrast-safe `primary-action` fills shared primary controls. Blue `focus` is reserved for visible keyboard focus.
+- Each lesson owns a bright runtime accent (`lesson-dog` through `lesson-bird`) and a paired strong accent in [`src/data/lessons.ts`](src/data/lessons.ts). Bright accents tint art wells and progress; strong accents color small labels and lesson-specific primary controls against white text. Separate lighter `paperColor` values color the SVG animals themselves and are content data, not shared StyleX tokens.
 - The PWA manifest currently uses near-match chrome values `#fff9ed` and `#ff785a`. They are limited to install/browser chrome and must not be copied into component styling as replacements for `canvas` or `primary`.
 
 There is no dark theme and no semantic error or warning palette in the current application.
@@ -159,8 +164,8 @@ Page-owned surfaces extend this language where the shape has a specific role: th
 
 ## Components
 
-- **Button:** `primary`, `secondary`, `quiet`, and `icon` variants share native button semantics, visible focus, disabled behavior, and pressed translation. Standard buttons are at least 58px high with 10px block and 24px inline padding. Quiet and phone icon controls retain a 44px minimum target. Primary backgrounds can use a lesson accent at runtime. The `xstyle` contract permits only outer layout adjustments used by current callers.
-- **Eyebrow:** A compact orientation label with the strong coral default or a runtime lesson accent. It remains text, not a decorative badge.
+- **Button:** `primary`, `secondary`, `quiet`, and `icon` variants share native button semantics, visible focus, disabled behavior, and pressed translation. Standard buttons are at least 58px high with 10px block and 24px inline padding. Quiet and phone icon controls retain a 44px minimum target. Primary backgrounds can use a lesson's strong accent at runtime. The `xstyle` contract permits only outer layout adjustments used by current callers.
+- **Eyebrow:** A compact orientation label with the strong coral default or a runtime lesson strong accent. It remains text, not a decorative badge.
 - **ProgressBar:** A 10px labeled lesson-progress track exposes `role="progressbar"` and numeric ARIA values. The 5px card variant is decorative and hidden from the accessibility tree. Fill width and color are the only dynamic values.
 - **Lesson card:** A native button containing number/completion status, optional lock state, tinted art well, animal illustration, title, tagline, metadata, and optional resume progress. Locked cards are disabled, grayscale, and explicitly labeled “locked.” On phones the card changes from vertical to horizontal rather than shrinking its touch target.
 - **App header:** Contains a wordmark home button and pill-shaped My Animals button. The house emoji hides below 600px while the text label remains.
@@ -182,15 +187,15 @@ Dynamic and fixed heights are part of the learning flow: the fold stage remains 
 
 All actions use native buttons or a labeled file input. Keyboard focus is a 4px blue outline with 3px offset. Icon-only controls have explicit accessible names; SVG animals and fold diagrams have role/name text; live instructions use `aria-live="polite"`; disabled and locked states use native `disabled`; and labeled progress exposes its current value.
 
-Touch targets are 44–58px for shared controls. Color is not the sole indicator for lock, completion, fold direction, or progress: text, symbols, disabled state, outlines, and geometry reinforce meaning. Lesson accent colors are content-driven, so any new text/background pairing must be checked at its actual size and weight instead of assuming every accent is interchangeable. The current primary variant renders bold white text on coral or the active lesson accent; this records implementation and is not a blanket contrast guarantee for arbitrary accent values.
+Touch targets are 44–58px for shared controls. Color is not the sole indicator for lock, completion, fold direction, or progress: text, symbols, disabled state, outlines, and geometry reinforce meaning. Bright lesson accents are content-driven and are not text colors; each lesson's paired strong accent supplies at least 4.5:1 contrast for small text and white-on-color primary actions. Any new pairing must be checked at its actual size and weight instead of assuming arbitrary accent values are interchangeable.
 
 ## Implementation Constraints
 
 StyleX owns reusable React component styles and extracts atomic CSS at build time. Keep `stylex.vite()` before the React plugin, retain CSS layers, and keep the development virtual stylesheet/runtime hookup in `src/main.tsx`. Shared variables must remain named exports from a `.stylex.ts` file.
 
-Use `stylex.create()` and `stylex.props()` for component-local styles. Add shared values to [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts); use dynamic style functions only for genuine lesson data or progress. Compose compiled styles instead of spreading raw objects, and keep cross-component `StyleXStyles` contracts narrow.
+Use `stylex.create()` and `stylex.props()` for component-local styles. Add shared values to [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts); use dynamic style functions only for genuine lesson data or progress. Keep each lesson's bright `color`, contrast-safe `strongColor`, and illustrative `paperColor` roles distinct. Compose compiled styles instead of spreading raw objects, and keep cross-component `StyleXStyles` contracts narrow.
 
-Global [`src/styles.css`](src/styles.css) remains the owner of font loading, document defaults, page-level layout not yet migrated, reduced-motion policy, and selector/keyframe-heavy SVG behavior. Remove superseded rules when migrating an owner; do not layer a second CSS implementation over StyleX. Unit tests mock StyleX's compile-time APIs for DOM behavior, while lint and the production build validate static syntax and extraction.
+Global [`src/styles.css`](src/styles.css) remains the owner of font loading, document defaults, page-level layout not yet migrated, reduced-motion policy, and selector/keyframe-heavy SVG behavior. It lives in the lower-priority `base` CSS layer so global resets cannot override StyleX primitives; the fixed phone player controls retain explicit size overrides in their page-owned media rule. Remove superseded rules when migrating an owner; do not layer a second CSS implementation over StyleX. Unit tests mock StyleX's compile-time APIs for DOM behavior, while lint and the production build validate static syntax and extraction.
 
 ## Do's and Don'ts
 
