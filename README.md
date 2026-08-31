@@ -25,7 +25,7 @@ Browser localStorage ◀──────── App screen flow ─────
 
 Lesson content and fold-guide coordinates live in [`src/data/lessons.ts`](src/data/lessons.ts). The player remains lesson-agnostic through the `AnimalLesson` and `FoldStep` contracts in [`src/types.ts`](src/types.ts).
 
-Reusable interface styles use StyleX: semantic tokens live in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts), and shared controls live beside them in [`src/design-system`](src/design-system). Global CSS is reserved for document defaults, page-level legacy layout, and the selector-heavy SVG fold animations. See the [design system guide](docs/design-system.md) for component contracts and migration rules.
+Reusable interface styles use StyleX: semantic tokens live in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts), and shared controls live beside them in [`src/design-system`](src/design-system). Global CSS is reserved for document defaults, page-level legacy layout, and the selector-heavy SVG fold animations. [`DESIGN.md`](DESIGN.md) is the persistent visual source of truth; the [implementation guide](docs/design-system.md) covers StyleX component contracts and migration rules.
 
 For deeper context:
 
@@ -52,11 +52,12 @@ Vite prints the local development URL. The app has no required environment varia
 bun run test       # Vitest + Testing Library
 bun run typecheck  # strict TypeScript
 bun run lint       # ESLint
+bun run design:lint  # Google Labs DESIGN.md validation
 bun run build      # production Vite bundle
 ```
 
 ## Deployment
 
-Pushes to `main` run all four checks and deploy the `dist/` artifact with the official GitHub Pages actions in [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). The path-relative build works at the generated project URL and the custom domain declared in [`public/CNAME`](public/CNAME). After the repository owner attaches that domain in Pages settings and DNS validates it, GitHub Pages provides the TLS certificate and HTTPS redirect.
+Pushes to `main` run all five checks and deploy the `dist/` artifact with the official GitHub Pages actions in [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml). The path-relative build works at the generated project URL and the custom domain declared in [`public/CNAME`](public/CNAME). After the repository owner attaches that domain in Pages settings and DNS validates it, GitHub Pages provides the TLS certificate and HTTPS redirect.
 
 See [ADR 0002](docs/adr/0002-deploy-as-a-static-site-on-github-pages.md) for the hosting decision and DNS requirements.

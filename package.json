@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
+    "design:lint": "designmd lint DESIGN.md",
     "typecheck": "tsc -b --pretty false",
     "lint": "eslint .",
     "test": "vitest run"
@@ -17,6 +18,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.0",
+    "@google/design.md": "0.4.0",
     "@stylexjs/eslint-plugin": "0",
     "@stylexjs/unplugin": "0",
     "@testing-library/jest-dom": "^7.0.0",

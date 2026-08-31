@@ -2,6 +2,8 @@
 
 Foldimals uses [StyleX](https://stylexjs.com/) for reusable React interface styles. StyleX extracts atomic CSS during the Vite build, so production styling remains static while component composition stays typed and local.
 
+The repository-root [`DESIGN.md`](../DESIGN.md) follows Google Labs' DESIGN.md format and is the source of truth for the implemented visual identity, machine-readable design tokens, responsive behavior, motion, and accessibility. This guide focuses on how that identity is implemented and extended with StyleX.
+
 ## Foundations
 
 [`src/design-system/tokens.stylex.ts`](../src/design-system/tokens.stylex.ts) is the source of truth for semantic colors, font families, radii, spacing, and control shadows. Components consume semantic names such as `colors.canvas` and `colors.ink` rather than copying values. Lesson colors remain runtime data and are passed through the narrow `accentColor` or `color` props on primitives.
