@@ -1,4 +1,4 @@
-export type AnimalId = 'dog' | 'cat' | 'mouse' | 'frog' | 'bird'
+export type AnimalId = 'dog' | 'cat' | 'mouse' | 'frog' | 'bird' | 'rabbit' | 'fox' | 'bear' | 'pig' | 'owl'
 
 export type DiagramId =
   | 'diamond'
@@ -33,6 +33,30 @@ export type DiagramId =
   | 'bird-head'
   | 'bird-beak'
   | 'bird-final'
+  | 'rabbit-band'
+  | 'rabbit-ear-left'
+  | 'rabbit-ears'
+  | 'rabbit-chin'
+  | 'rabbit-final'
+  | 'fox-half'
+  | 'fox-ear'
+  | 'fox-face'
+  | 'fox-final'
+  | 'bear-ear-left'
+  | 'bear-ears'
+  | 'bear-tips'
+  | 'bear-chin'
+  | 'bear-final'
+  | 'pig-sides'
+  | 'pig-ear-left'
+  | 'pig-ears'
+  | 'pig-snout'
+  | 'pig-final'
+  | 'owl-wings'
+  | 'owl-brow'
+  | 'owl-beak'
+  | 'owl-feet'
+  | 'owl-final'
 
 export interface Point {
   x: number

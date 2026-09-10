@@ -22,8 +22,9 @@ Mirror CI order locally: **test → typecheck → lint → build**.
 
 - `src/main.tsx` — React root. Registers `public/sw.js` **only in PROD** (`import.meta.env.PROD`).
 - `src/App.tsx` — the only routing layer. A `Screen` union (`home | preview | player | complete | collection`) switches screens; there is **no router library**.
-- `src/types.ts` — the contracts: `AnimalLesson`, `FoldStep`, `FoldGuide`, `SavedProgress`, and `AnimalId = 'dog' | 'cat' | 'mouse' | 'frog' | 'bird'`.
+- `src/types.ts` — the contracts: `AnimalLesson`, `FoldStep`, `FoldGuide`, `SavedProgress`, and `AnimalId` for the ten lessons (Dog through Owl).
 - `src/data/lessons.ts` — all lesson copy and fold-guide coordinates. The **order of the `lessons` array is the progression order**; `isLessonUnlocked` unlocks a lesson only when the previous one is completed (index 0 always unlocked).
+- `src/data/paperShapes.ts` — polygon layers for the additional lessons, rendered by the shared canvas.
 - `src/storage.ts` — `localStorage` key `foldimals-progress-v1`. `loadProgress`/`saveProgress` accept an injectable `Storage`, which the tests rely on.
 - `src/components/` — `FoldingPlayer` (lesson-agnostic), `OrigamiCanvas` (SVG fold/target animation), `AnimalArt`.
 

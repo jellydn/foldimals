@@ -13,7 +13,7 @@ export function AnimalCard({ lesson, index, unlocked, completed, savedStep, onSe
   savedStep: number
   onSelect: () => void
 }) {
-  return <button {...stylex.props(styles.card, index === 3 && styles.centeredCard, !unlocked && styles.locked)} onClick={onSelect} disabled={!unlocked} aria-label={`${lesson.name}${unlocked ? '' : ', locked'}`}>
+  return <button {...stylex.props(styles.card, !unlocked && styles.locked)} onClick={onSelect} disabled={!unlocked} aria-label={`${lesson.name}${unlocked ? '' : ', locked'}`}>
     <div {...stylex.props(styles.bubble)}>{completed ? '✓' : index + 1}</div>
     {!unlocked && <div {...stylex.props(styles.bubble, styles.lockBubble)} aria-hidden="true">🔒</div>}
     <div {...stylex.props(styles.artWrap, styles.tint(lesson.color))}>
@@ -125,12 +125,6 @@ const styles = stylex.create({
     },
     transitionDuration: '200ms',
     transitionProperty: 'transform, box-shadow',
-  },
-  centeredCard: {
-    gridColumn: {
-      default: '2 / span 2',
-      '@media (max-width: 820px)': 'span 3',
-    },
   },
   copy: {
     paddingBlock: 16,
