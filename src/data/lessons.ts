@@ -137,7 +137,7 @@ export const lessons: AnimalLesson[] = [
     strongColor: '#92502b',
     paperColor: '#f5ad65',
     steps: [
-      { id: 'fox-1', instruction: 'Start with your square like a diamond.', hint: 'Put the colored side face down.', diagram: 'diamond', guide: guide([55, 55, 245, 245], [95, 82, 205, 205], [point(150, 38)]) },
+      { id: 'fox-1', instruction: 'Start with your square like a diamond.', hint: 'Put the colored side facing down.', diagram: 'diamond', guide: guide([55, 55, 245, 245], [95, 82, 205, 205], [point(150, 38)]) },
       { id: 'fox-2', instruction: 'Fold the top point down to the bottom.', hint: 'Line up the two points to make a triangle.', diagram: 'triangle-down', guide: guide([38, 75, 262, 75], [150, 38, 150, 245], [point(150, 245)]) },
       { id: 'fox-3', instruction: 'Fold the right corner over to the left.', hint: 'Press the middle crease, then open this fold.', diagram: 'fox-half', guide: guide([150, 75, 150, 245], [250, 85, 50, 85], [point(150, 75)]) },
       { id: 'fox-4', instruction: 'Fold the left corner up for a pointed ear.', hint: 'Let the ear stick above the top edge.', diagram: 'fox-ear', guide: guide([80, 100, 115, 155], [48, 85, 90, 45], [point(90, 45)]) },
