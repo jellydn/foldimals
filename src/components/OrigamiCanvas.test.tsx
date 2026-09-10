@@ -31,10 +31,21 @@ describe('OrigamiCanvas', () => {
     expect(container.querySelector('.paper-stage')).toHaveClass('is-slow')
   })
 
-  it('shows the finished animal instead of a diagram for a final step', () => {
-    const { container } = render(<OrigamiCanvas {...baseProps} step={lessons[0].steps[5]} />)
+  it.each(lessons)('shows the finished $id instead of guides for its final step', (lesson) => {
+    const { container } = render(<OrigamiCanvas {...baseProps} lesson={lesson} step={lesson.steps.at(-1)!} />)
     expect(container.querySelector('.final-animal')).not.toBeNull()
+    expect(screen.getByRole('img', { name: `${lesson.id} origami` })).toBeInTheDocument()
     expect(container.querySelector('.fold-guide')).toBeNull()
     expect(screen.getByText('Ta-da!')).toBeInTheDocument()
+  })
+
+  it.each(lessons)('renders visible paper for every intermediate $id step', (lesson) => {
+    const { container, rerender } = render(<OrigamiCanvas {...baseProps} lesson={lesson} step={lesson.steps[0]} />)
+    for (const step of lesson.steps.slice(0, -1)) {
+      rerender(<OrigamiCanvas {...baseProps} lesson={lesson} step={step} detailedHelp />)
+      expect(container.querySelector('.paper-motion polygon, .paper-motion rect, .paper-motion path')).not.toBeNull()
+      expect(container.querySelector('.fold-guide line.direction')).not.toBeNull()
+      expect(container.querySelector('.final-animal')).toBeNull()
+    }
   })
 })

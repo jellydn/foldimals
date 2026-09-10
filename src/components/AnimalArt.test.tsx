@@ -2,13 +2,14 @@ import { render, screen } from '@testing-library/react'
 import { AnimalArt } from './AnimalArt'
 
 describe('AnimalArt', () => {
-  const animals = ['dog', 'cat', 'mouse', 'frog', 'bird'] as const
+  const animals = ['dog', 'cat', 'mouse', 'frog', 'bird', 'rabbit', 'fox', 'bear', 'pig', 'owl'] as const
 
   it.each(animals.map((animal) => [animal, animal] as const))('renders a labeled svg for %s', (animal) => {
     render(<AnimalArt animal={animal} color="#ffc86b" />)
     const svg = screen.getByRole('img', { name: `${animal} origami` })
     expect(svg).toBeInTheDocument()
     expect(svg.tagName).toBe('svg')
+    expect(svg.querySelector('path[fill="#ffc86b"]')).not.toBeNull()
   })
 
   it('accepts a className onto the svg', () => {

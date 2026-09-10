@@ -4,7 +4,7 @@
 
 ## What children can do
 
-- Follow five lessons in progression order: Dog, Cat, Mouse, Frog, and Bird.
+- Follow ten lessons in progression order: Dog, Cat, Mouse, Frog, Bird, Rabbit, Fox, Bear, Pig, and Owl.
 - Watch a large animated paper model with a crease, arrow, and concise instruction for every fold.
 - Replay a fold or ask for progressive help: first a slower replay, then highlighted targets and an alternate hint.
 - Resume an unfinished lesson and unlock the next animal after completion.
@@ -24,6 +24,8 @@ Browser localStorage ◀──────── App screen flow ─────
 ```
 
 Lesson content and fold-guide coordinates live in [`src/data/lessons.ts`](src/data/lessons.ts). The player remains lesson-agnostic through the `AnimalLesson` and `FoldStep` contracts in [`src/types.ts`](src/types.ts).
+
+The added lessons use polygon layers from [`src/data/paperShapes.ts`](src/data/paperShapes.ts). The original five lessons keep their IDs and order, so existing progress unlocks Rabbit after Bird without a storage migration.
 
 Reusable interface styles use StyleX: semantic tokens live in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts), and shared controls live beside them in [`src/design-system`](src/design-system). Global CSS is reserved for document defaults, page-level legacy layout, and the selector-heavy SVG fold animations. [`DESIGN.md`](DESIGN.md) is the persistent visual source of truth; the [implementation guide](docs/design-system.md) covers StyleX component contracts and migration rules.
 

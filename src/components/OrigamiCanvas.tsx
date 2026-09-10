@@ -1,3 +1,4 @@
+import { paperShapes } from '../data/paperShapes'
 import type { AnimalLesson, DiagramId, FoldStep } from '../types'
 import { AnimalArt } from './AnimalArt'
 
@@ -12,6 +13,9 @@ interface OrigamiCanvasProps {
 const paperStyle = { stroke: '#27324a', strokeWidth: 4, strokeLinejoin: 'round' as const }
 
 function PaperDiagram({ diagram, color }: { diagram: DiagramId; color: string }) {
+  const layers = paperShapes[diagram]
+  if (layers) return <g>{layers.map((points) => <polygon key={points} points={points} fill={color} {...paperStyle} />)}</g>
+
   switch (diagram) {
     case 'diamond':
     case 'square-cross':
@@ -83,7 +87,10 @@ function PaperDiagram({ diagram, color }: { diagram: DiagramId; color: string })
   }
 }
 
-const finalDiagrams = new Set<DiagramId>(['dog-final', 'cat-final', 'mouse-final', 'frog-final', 'bird-final'])
+const finalDiagrams = new Set<DiagramId>([
+  'dog-final', 'cat-final', 'mouse-final', 'frog-final', 'bird-final',
+  'rabbit-final', 'fox-final', 'bear-final', 'pig-final', 'owl-final',
+])
 
 function isFinalDiagram(diagram: DiagramId): boolean {
   return finalDiagrams.has(diagram)

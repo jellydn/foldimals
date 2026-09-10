@@ -12,10 +12,25 @@ const contrastRatio = (foreground: string, background: string) => {
 }
 
 describe('lesson progression', () => {
-  it('has five lessons in progression order with requested step ranges', () => {
-    expect(lessons.map((lesson) => lesson.id)).toEqual(['dog', 'cat', 'mouse', 'frog', 'bird'])
-    expect(lessons.map((lesson) => lesson.steps.length)).toEqual([6, 6, 7, 8, 9])
+  it('keeps the original five lessons first and appends five new animals', () => {
+    expect(lessons.map((lesson) => lesson.id)).toEqual(['dog', 'cat', 'mouse', 'frog', 'bird', 'rabbit', 'fox', 'bear', 'pig', 'owl'])
+    expect(lessons.map((lesson) => lesson.steps.length)).toEqual([6, 6, 7, 8, 9, 7, 6, 7, 7, 7])
     lessons.forEach((lesson) => lesson.steps.forEach((step) => expect(step.guide).toBeDefined()))
+  })
+
+  it('uses unique step IDs and visible, nonzero fold guides', () => {
+    const steps = lessons.flatMap((lesson) => lesson.steps)
+    expect(new Set(steps.map((step) => step.id)).size).toBe(steps.length)
+    for (const step of steps) {
+      expect(step.guide.line[0]).not.toEqual(step.guide.line[1])
+      expect(step.guide.arrow[0]).not.toEqual(step.guide.arrow[1])
+      for (const point of [...step.guide.line, ...step.guide.arrow, ...step.guide.targets]) {
+        expect(point.x).toBeGreaterThanOrEqual(0)
+        expect(point.x).toBeLessThanOrEqual(300)
+        expect(point.y).toBeGreaterThanOrEqual(0)
+        expect(point.y).toBeLessThanOrEqual(300)
+      }
+    }
   })
 
   it('provides a strong lesson color with readable white text', () => {
@@ -28,5 +43,13 @@ describe('lesson progression', () => {
     expect(isLessonUnlocked(1, ['dog'])).toBe(true)
     expect(isLessonUnlocked(2, ['dog'])).toBe(false)
     expect(isLessonUnlocked(2, ['dog', 'cat'])).toBe(true)
+  })
+
+  it('unlocks every added lesson only after its immediate predecessor', () => {
+    const predecessors = ['bird', 'rabbit', 'fox', 'bear', 'pig']
+    predecessors.forEach((previous, offset) => {
+      expect(isLessonUnlocked(offset + 5, ['dog'])).toBe(false)
+      expect(isLessonUnlocked(offset + 5, [previous])).toBe(true)
+    })
   })
 })
