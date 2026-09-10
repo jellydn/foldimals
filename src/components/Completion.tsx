@@ -27,7 +27,7 @@ export function Completion({ lesson, onAnother, onCollection }: { lesson: Animal
     <div className="confetti" aria-hidden="true">✦ · ★ · ✦</div>
     <Eyebrow>YOU MADE IT!</Eyebrow>
     <h1>Meet your new <em>{lesson.name}!</em></h1>
-    <p>You turned one square into a brand-new friend.</p>
+    <p>{lesson.finishMessage ?? 'You turned one square into a brand-new friend.'}</p>
     <div className="finished-art" style={{ background: `${lesson.color}16` }}>
       {photo ? <img src={photo} alt={`My finished ${lesson.name}`} /> : <AnimalArt animal={lesson.id} color={lesson.paperColor} decorated={decorated} />}
       <span className="celebration-star star-one">★</span><span className="celebration-star star-two">✦</span>

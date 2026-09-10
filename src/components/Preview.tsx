@@ -18,12 +18,12 @@ export function Preview({ lesson, savedStep, onBack, onStart }: { lesson: Animal
         <p className="tagline">{lesson.tagline}</p>
         <div className="lesson-facts">
           <span>⏱ <strong>{lesson.minutes} minutes</strong></span>
-          <span>◇ <strong>{lesson.steps.length} folds</strong></span>
+          <span>◇ <strong>{lesson.steps.length} {lesson.steps[0].action ? 'steps' : 'folds'}</strong></span>
           <span>☀ <strong>{lesson.difficulty}</strong></span>
         </div>
         <div className="ready-box">
           <div className="paper-icon" aria-hidden="true">◇</div>
-          <div><h2>Grab one square paper</h2><p>Any color, about the size of your hand.</p></div>
+          <div><h2>Grab one square paper</h2><p>{lesson.materials ?? 'Any color, about the size of your hand.'}</p></div>
           <span className="ready-check" aria-hidden="true">✓</span>
         </div>
         <div className="calm-note"><span aria-hidden="true">💛</span><p><strong>No rush.</strong> You can replay every fold or ask for extra help.</p></div>

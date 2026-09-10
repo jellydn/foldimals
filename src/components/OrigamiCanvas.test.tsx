@@ -44,7 +44,8 @@ describe('OrigamiCanvas', () => {
     for (const step of lesson.steps.slice(0, -1)) {
       rerender(<OrigamiCanvas {...baseProps} lesson={lesson} step={step} detailedHelp />)
       expect(container.querySelector('.paper-motion polygon, .paper-motion rect, .paper-motion path')).not.toBeNull()
-      expect(container.querySelector('.fold-guide line.direction')).not.toBeNull()
+      if (step.action === 'Set up') expect(container.querySelector('.fold-guide')).toBeNull()
+      else expect(container.querySelector('.fold-guide line.direction')).not.toBeNull()
       expect(container.querySelector('.final-animal')).toBeNull()
     }
   })

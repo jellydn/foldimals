@@ -6,6 +6,21 @@ import { STORAGE_KEY } from './storage'
 beforeEach(() => localStorage.clear())
 
 describe('core journey', () => {
+  it('clamps an old Bird step and keeps all completed animals', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ completed: ['dog', 'cat', 'mouse', 'frog'], current: { bird: 8 } }))
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Bird' }))
+    await user.click(screen.getByRole('button', { name: 'Keep folding — step 5 →' }))
+    expect(screen.getByRole('heading', { name: 'Draw an eye and color the little beak.' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /I did it/ }))
+    await user.click(screen.getByRole('button', { name: 'See My Animals' }))
+    for (const animal of ['dog', 'cat', 'mouse', 'frog', 'bird']) {
+      expect(screen.getByRole('img', { name: `${animal} origami` })).toBeInTheDocument()
+    }
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).completed).toEqual(['dog', 'cat', 'mouse', 'frog', 'bird'])
+  })
+
   it('starts with only Dog unlocked and enters its lesson', async () => {
     const user = userEvent.setup()
     render(<App />)

@@ -18,12 +18,12 @@ colors:
   lesson-dog-strong: "#935c5c"
   lesson-cat: "#8f7ee7"
   lesson-cat-strong: "#5b5898"
-  lesson-mouse: "#4ea99b"
-  lesson-mouse-strong: "#3a6e72"
-  lesson-frog: "#72a83d"
-  lesson-frog-strong: "#4c6d44"
-  lesson-bird: "#3988d3"
-  lesson-bird-strong: "#305d8e"
+  lesson-mouse: "#b4a59a"
+  lesson-mouse-strong: "#6f594d"
+  lesson-frog: "#68b878"
+  lesson-frog-strong: "#326746"
+  lesson-bird: "#5eafd0"
+  lesson-bird-strong: "#286580"
 typography:
   display-hero:
     fontFamily: Fredoka
@@ -173,6 +173,10 @@ Page-owned surfaces extend this language where the shape has a specific role: th
 ## Imagery & Motion
 
 Animal imagery is hand-authored SVG with heavy navy outlines, flat cheerful fills, simple facial features, and lesson-specific paper colors. Decorative symbols are sparse and use familiar characters or emoji; they are marked `aria-hidden` when they do not convey content. User-selected completion photos remain on-device and use `object-fit: cover` inside the finished-art shape.
+
+Mouse, Frog, and Bird use the same final polygon layers in their lesson diagrams and artwork. Mouse is a warm stone-colored face with folded ears, a small nose, and drawn whiskers. Frog is a leaf-green, wide-eyed face with a flat chin; it is not a jumping model. Bird is a sky-blue side-view paper picture with one raised wing, a long tail, and a small folded beak. Eyes, inner-ear color, beak color, and feather lines are drawn marks, not extra paper parts.
+
+These three lessons separate setup, folding, and drawing. Fold arrows appear on the starting paper state. A native “Show folded shape” toggle reveals the result without arrows; its pressed state and the stage label identify the current view. Replay, help, and step navigation restore the starting view. Help supplies a hint on the first request and target dots on the second. Setup and drawing hints are always visible. These static comparisons also work with reduced motion; they do not claim to simulate continuous 3D paper folding.
 
 Motion explains or reassures rather than rewards speed. The home animal floats over 3.2 seconds; fold diagrams pulse over 1.35 seconds; guides fade in, arrows march, targets pulse, and progress width transitions over 300ms. “I need help” slows the fold animation to 2.7 seconds before adding target detail. A global `prefers-reduced-motion: reduce` rule reduces all animation and transition durations to `0.01ms` and limits iteration to one.
 
