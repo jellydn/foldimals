@@ -27,6 +27,8 @@ Lesson content and fold-guide coordinates live in [`src/data/lessons.ts`](src/da
 
 The added lessons use polygon layers from [`src/data/paperShapes.ts`](src/data/paperShapes.ts). The original five lessons keep their IDs and order, so existing progress unlocks Rabbit after Bird without a storage migration.
 
+Mouse (7 steps), Frog (8 steps), and Bird (5 steps) teach flat paper models with explicit setup and drawing steps. Their cards, final diagrams, and collection artwork share the last folded polygon layers. Each fold starts with its source shape; **Show folded shape** reveals the result. Help shows a hint first and target dots on the second request. Frog is a face, not a jumping model, and Bird is a side-view picture, not a flying toy. Bring one 15 cm square and pencils. Old completed animals remain saved; a saved Bird step beyond the shorter lesson is clamped to its final step.
+
 Reusable interface styles use StyleX: semantic tokens live in [`src/design-system/tokens.stylex.ts`](src/design-system/tokens.stylex.ts), and shared controls live beside them in [`src/design-system`](src/design-system). Global CSS is reserved for document defaults, page-level legacy layout, and the selector-heavy SVG fold animations. [`DESIGN.md`](DESIGN.md) is the persistent visual source of truth; the [implementation guide](docs/design-system.md) covers StyleX component contracts and migration rules.
 
 For deeper context:

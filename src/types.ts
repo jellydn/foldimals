@@ -2,8 +2,6 @@ export type AnimalId = 'dog' | 'cat' | 'mouse' | 'frog' | 'bird' | 'rabbit' | 'f
 
 export type DiagramId =
   | 'diamond'
-  | 'square-cross'
-  | 'rectangle'
   | 'triangle-down'
   | 'triangle-up'
   | 'triangle-side'
@@ -15,22 +13,20 @@ export type DiagramId =
   | 'cat-ears'
   | 'cat-head'
   | 'cat-final'
-  | 'mouse-kite-top'
-  | 'mouse-kite'
-  | 'mouse-ear'
+  | 'paper-square'
+  | 'paper-triangle'
+  | 'mouse-ear-left'
+  | 'mouse-ears'
+  | 'mouse-tips'
   | 'mouse-nose'
   | 'mouse-final'
-  | 'frog-roof'
-  | 'frog-triangle'
-  | 'frog-body'
-  | 'frog-side-left'
-  | 'frog-sides'
+  | 'frog-eye-left'
+  | 'frog-eyes'
+  | 'frog-tip-left'
+  | 'frog-tips'
+  | 'frog-chin'
   | 'frog-final'
-  | 'bird-kite'
-  | 'bird-diamond'
-  | 'bird-wing-one'
-  | 'bird-wings'
-  | 'bird-head'
+  | 'bird-wing'
   | 'bird-beak'
   | 'bird-final'
   | 'rabbit-band'
@@ -75,6 +71,8 @@ export interface FoldStep {
   hint: string
   diagram: DiagramId
   guide: FoldGuide
+  startingDiagram?: DiagramId
+  action?: 'Set up' | 'Fold' | 'Draw'
 }
 
 export interface AnimalLesson {
@@ -86,6 +84,8 @@ export interface AnimalLesson {
   color: string
   strongColor: string
   paperColor: string
+  materials?: string
+  finishMessage?: string
   steps: FoldStep[]
 }
 

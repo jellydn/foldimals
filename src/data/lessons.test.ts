@@ -1,4 +1,5 @@
 import { isLessonUnlocked, lessons } from './lessons'
+import { paperShapes } from './paperShapes'
 
 const relativeLuminance = (color: string) => {
   const channels = color.match(/[\da-f]{2}/gi)?.map((channel) => Number.parseInt(channel, 16) / 255) ?? []
@@ -14,7 +15,7 @@ const contrastRatio = (foreground: string, background: string) => {
 describe('lesson progression', () => {
   it('keeps the original five lessons first and appends five new animals', () => {
     expect(lessons.map((lesson) => lesson.id)).toEqual(['dog', 'cat', 'mouse', 'frog', 'bird', 'rabbit', 'fox', 'bear', 'pig', 'owl'])
-    expect(lessons.map((lesson) => lesson.steps.length)).toEqual([6, 6, 7, 8, 9, 7, 6, 7, 7, 7])
+    expect(lessons.map((lesson) => lesson.steps.length)).toEqual([6, 6, 7, 8, 5, 7, 6, 7, 7, 7])
     lessons.forEach((lesson) => lesson.steps.forEach((step) => expect(step.guide).toBeDefined()))
   })
 
@@ -35,6 +36,26 @@ describe('lesson progression', () => {
 
   it('provides a strong lesson color with readable white text', () => {
     lessons.forEach((lesson) => expect(contrastRatio(lesson.strongColor, '#ffffff')).toBeGreaterThanOrEqual(4.5))
+  })
+
+  it.each(['mouse', 'frog', 'bird'])('%s uses connected paper states and geometrically valid fold arrows', (id) => {
+    const lesson = lessons.find((item) => item.id === id)!
+    expect(lesson.steps[0].action).toBe('Set up')
+    expect(lesson.steps.at(-1)!.action).toBe('Draw')
+    for (const [index, step] of lesson.steps.entries()) {
+      if (step.action !== 'Fold') continue
+      expect(step.startingDiagram).toBe(lesson.steps[index - 1].diagram)
+      expect(paperShapes[step.diagram]).not.toEqual(paperShapes[step.startingDiagram!])
+      const [a, b] = step.guide.line
+      const [from, to] = step.guide.arrow
+      // A flat fold keeps the midpoint on the crease and moves perpendicular to it.
+      const dx = b.x - a.x
+      const dy = b.y - a.y
+      expect((to.x - from.x) * dx + (to.y - from.y) * dy).toBeCloseTo(0, 3)
+      expect(((from.x + to.x) / 2 - a.x) * dy - ((from.y + to.y) / 2 - a.y) * dx).toBeCloseTo(0, 3)
+      const startingPoints = paperShapes[step.startingDiagram!]!.join(' ').split(' ')
+      expect(startingPoints).toContain(`${from.x},${from.y}`)
+    }
   })
 
   it('unlocks only after the previous animal is complete', () => {

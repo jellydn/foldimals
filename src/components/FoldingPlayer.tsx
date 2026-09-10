@@ -49,11 +49,11 @@ export function FoldingPlayer({ lesson, initialStep, onStepChange, onExit, onCom
     </header>
 
     <section className="player-layout">
-      <OrigamiCanvas lesson={lesson} step={step} animationKey={animationKey} slow={helpLevel > 0} detailedHelp={helpLevel > 1} />
+      <OrigamiCanvas key={`${step.id}-${animationKey}`} lesson={lesson} step={step} animationKey={animationKey} slow={helpLevel > 0} detailedHelp={helpLevel > 1} />
       <div className="instruction-panel" aria-live="polite">
-        <span className="action-chip" style={{ background: `${lesson.color}22`, color: lesson.strongColor }}>ONE FOLD</span>
+        <span className="action-chip" style={{ background: `${lesson.color}22`, color: lesson.strongColor }}>{step.action?.toUpperCase() ?? 'ONE FOLD'}</span>
         <h1>{step.instruction}</h1>
-        {helpLevel > 1 && <div className="hint-box"><span aria-hidden="true">💡</span><p><strong>Try this:</strong> {step.hint}</p></div>}
+        {(helpLevel > 1 || (step.action && helpLevel > 0) || step.action === 'Set up' || step.action === 'Draw') && <div className="hint-box"><span aria-hidden="true">💡</span><p><strong>Try this:</strong> {step.hint}</p></div>}
         <button className={`help-button ${helpLevel ? 'active' : ''}`} onClick={askForHelp}>
           <span aria-hidden="true">{helpLevel > 1 ? '✨' : '👋'}</span>
           {helpLevel === 0 ? 'I need help' : helpLevel === 1 ? 'Show me more help' : 'Replay extra help'}
