@@ -39,6 +39,8 @@ For deeper context:
 
 Requires [Bun](https://bun.sh/).
 
+TypeScript stays on 6.0.x because the ESLint parser requires its compiler API; TypeScript 7.0 does not provide that API.
+
 ```bash
 bun install
 bun run dev
