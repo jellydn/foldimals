@@ -21,7 +21,7 @@
     "@google/design.md": "0.4.0",
     "@stylexjs/eslint-plugin": "0",
     "@stylexjs/unplugin": "0",
-    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/jest-dom": "^8.0.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.0",
     "@types/node": "^26.4.0",
